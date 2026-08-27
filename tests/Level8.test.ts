@@ -19,10 +19,12 @@ describe("level 8 catalog", () => {
       "level-6",
       "level-7",
       "level-8",
+      "level-9",
+      "level-10",
     ]);
     expect(findLevel(level8.id)).toBe(level8);
     expect(nextLevel(level7.id)).toBe(level8);
-    expect(nextLevel(level8.id)).toBeUndefined();
+    expect(nextLevel(level8.id)?.id).toBe("level-9");
   });
 
   it("uses a top-right goal with a belt sitting below the entry window", () => {

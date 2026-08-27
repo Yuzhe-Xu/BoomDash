@@ -7,6 +7,8 @@ import { level5 } from "../src/level/level5";
 import { level6 } from "../src/level/level6";
 import { level7 } from "../src/level/level7";
 import { level8 } from "../src/level/level8";
+import { level9 } from "../src/level/level9";
+import { level10 } from "../src/level/level10";
 import {
   LEVEL1_TUTORIAL_PAGES,
   LEVEL2_TUTORIAL_PAGES,
@@ -60,6 +62,8 @@ describe("tutorialPages", () => {
     expect(shouldShowTutorial(level6.id)).toBe(true);
     expect(shouldShowTutorial(level7.id)).toBe(false);
     expect(shouldShowTutorial(level8.id)).toBe(false);
+    expect(shouldShowTutorial(level9.id)).toBe(false);
+    expect(shouldShowTutorial(level10.id)).toBe(false);
     expect(shouldShowTutorial("missing")).toBe(false);
   });
 
