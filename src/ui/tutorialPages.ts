@@ -1,13 +1,14 @@
 import { level1 } from "../level/level1";
+import { level2 } from "../level/level2";
 
 export type TutorialPage = {
-  id: "goal" | "deploy" | "flight";
+  id: "goal" | "deploy" | "flight" | "scroll";
   kicker: string;
   title: string;
   copy: string;
 };
 
-export const TUTORIAL_PAGES: TutorialPage[] = [
+export const LEVEL1_TUTORIAL_PAGES: TutorialPage[] = [
   {
     id: "goal",
     kicker: "OBJECTIVE",
@@ -28,18 +29,39 @@ export const TUTORIAL_PAGES: TutorialPage[] = [
   },
 ];
 
+export const LEVEL2_TUTORIAL_PAGES: TutorialPage[] = [
+  {
+    id: "scroll",
+    kicker: "SURVEY",
+    title: "浏览地图",
+    copy: "使用鼠标滚轮或上下滑动，浏览整个地图。",
+  },
+];
+
+const TUTORIALS_BY_LEVEL: Record<string, TutorialPage[]> = {
+  [level1.id]: LEVEL1_TUTORIAL_PAGES,
+  [level2.id]: LEVEL2_TUTORIAL_PAGES,
+};
+
+export function tutorialPagesFor(levelId: string): TutorialPage[] {
+  return TUTORIALS_BY_LEVEL[levelId] ?? [];
+}
+
 export function shouldShowTutorial(levelId: string): boolean {
-  return levelId === level1.id;
+  return tutorialPagesFor(levelId).length > 0;
 }
 
-export function clampTutorialPage(index: number): number {
-  return Math.min(TUTORIAL_PAGES.length - 1, Math.max(0, index));
+export function clampTutorialPage(index: number, pageCount: number): number {
+  if (pageCount <= 0) {
+    return 0;
+  }
+  return Math.min(pageCount - 1, Math.max(0, index));
 }
 
-export function isFirstTutorialPage(index: number): boolean {
-  return clampTutorialPage(index) === 0;
+export function isFirstTutorialPage(index: number, pageCount: number): boolean {
+  return clampTutorialPage(index, pageCount) === 0;
 }
 
-export function isLastTutorialPage(index: number): boolean {
-  return clampTutorialPage(index) === TUTORIAL_PAGES.length - 1;
+export function isLastTutorialPage(index: number, pageCount: number): boolean {
+  return pageCount <= 0 || clampTutorialPage(index, pageCount) === pageCount - 1;
 }

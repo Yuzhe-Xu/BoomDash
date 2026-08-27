@@ -1,8 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
 
+async function skipTutorial(page: Page): Promise<void> {
+  await page.getByRole("button", { name: "SKIP" }).click();
+}
+
 async function enterFirstSector(page: Page): Promise<void> {
   await page.getByRole("button", { name: "START" }).click();
-  await page.getByRole("button", { name: "SKIP" }).click();
+  await skipTutorial(page);
 }
 
 test("shows a three-page tutorial before sector one", async ({ page }) => {
@@ -24,6 +28,23 @@ test("shows a three-page tutorial before sector one", async ({ page }) => {
   await page.getByRole("button", { name: "BEGIN" }).click();
   await expect(page.locator("#tutorial")).toBeHidden();
   await expect(page.locator("#level-tag")).toHaveText("SECTOR 01");
+});
+
+test("shows a one-page map survey tutorial before sector two", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "SECTORS" }).click();
+  await page.getByRole("button", { name: /SECTOR 02/ }).click();
+
+  await expect(page.locator("#tutorial")).toBeVisible();
+  await expect(page.locator("#tutorial-title")).toHaveText("浏览地图");
+  await expect(page.locator(".anim-scroll")).toBeVisible();
+  await expect(page.locator("#tutorial-copy")).toContainText("鼠标滚轮");
+  await expect(page.locator("#tutorial-copy")).toContainText("上下滑动");
+  await expect(page.getByRole("button", { name: "BEGIN" })).toBeVisible();
+
+  await page.getByRole("button", { name: "BEGIN" }).click();
+  await expect(page.locator("#tutorial")).toBeHidden();
+  await expect(page.locator("#level-tag")).toHaveText("SECTOR 02");
 });
 
 test("loads the first sector and can place a bomb then launch", async ({ page }) => {
@@ -64,6 +85,8 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
   await expect(page.getByRole("button", { name: /SECTOR 02/ })).toBeEnabled();
 
   await page.getByRole("button", { name: /SECTOR 02/ }).click();
+  await expect(page.locator("#tutorial")).toBeVisible();
+  await skipTutorial(page);
   await expect(page.locator("#level-tag")).toHaveText("SECTOR 02");
   await expect(page.locator("#debug")).toContainText("camera 844");
 

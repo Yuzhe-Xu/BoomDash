@@ -1,5 +1,5 @@
 import {
-  TUTORIAL_PAGES,
+  type TutorialPage,
   clampTutorialPage,
   isFirstTutorialPage,
   isLastTutorialPage,
@@ -7,6 +7,7 @@ import {
 
 export class TutorialCarousel {
   private page = 0;
+  private pages: TutorialPage[] = [];
   private complete: (() => void) | null = null;
   private swipeX: number | null = null;
 
@@ -27,7 +28,7 @@ export class TutorialCarousel {
     this.skipButton.addEventListener("click", () => this.finish());
     this.prevButton.addEventListener("click", () => this.setPage(this.page - 1));
     this.nextButton.addEventListener("click", () => {
-      if (isLastTutorialPage(this.page)) {
+      if (isLastTutorialPage(this.page, this.pages.length)) {
         this.finish();
         return;
       }
@@ -63,7 +64,8 @@ export class TutorialCarousel {
     });
   }
 
-  show(): void {
+  show(pages: TutorialPage[]): void {
+    this.pages = pages;
     this.root.hidden = false;
     this.page = 0;
     this.sync();
@@ -80,25 +82,27 @@ export class TutorialCarousel {
   }
 
   private setPage(index: number): void {
-    this.page = clampTutorialPage(index);
+    this.page = clampTutorialPage(index, this.pages.length);
     this.sync();
   }
 
   private sync(): void {
-    const page = TUTORIAL_PAGES[this.page];
+    const page = this.pages[this.page];
     if (!page) {
       return;
     }
     this.kicker.textContent = page.kicker;
     this.title.textContent = page.title;
     this.copy.textContent = page.copy;
-    this.prevButton.hidden = isFirstTutorialPage(this.page);
-    this.nextButton.textContent = isLastTutorialPage(this.page) ? "BEGIN" : "NEXT";
+    this.prevButton.hidden = isFirstTutorialPage(this.page, this.pages.length);
+    this.nextButton.textContent = isLastTutorialPage(this.page, this.pages.length)
+      ? "BEGIN"
+      : "NEXT";
     for (const slide of this.stage.querySelectorAll<HTMLElement>(".tutorial-slide")) {
-      slide.classList.toggle("is-active", Number(slide.dataset.page) === this.page);
+      slide.classList.toggle("is-active", slide.dataset.id === page.id);
     }
     this.dots.replaceChildren(
-      ...TUTORIAL_PAGES.map((_, index) => {
+      ...this.pages.map((_, index) => {
         const button = document.createElement("button");
         button.type = "button";
         button.dataset.page = String(index);

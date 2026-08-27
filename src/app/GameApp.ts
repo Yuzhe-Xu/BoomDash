@@ -17,7 +17,7 @@ import { PlanningControls } from "../ui/PlanningControls";
 import { ResultPanel } from "../ui/ResultPanel";
 import { StartScreen } from "../ui/StartScreen";
 import { TutorialCarousel } from "../ui/TutorialCarousel";
-import { shouldShowTutorial } from "../ui/tutorialPages";
+import { shouldShowTutorial, tutorialPagesFor } from "../ui/tutorialPages";
 
 export class GameApp {
   private readonly debug = new URLSearchParams(window.location.search).get("debug") === "1";
@@ -315,9 +315,10 @@ export class GameApp {
   private requestLevel(id: string): void {
     if (shouldShowTutorial(id)) {
       this.pendingLevelId = id;
+      this.started = false;
       this.audio.unlock();
       this.startScreen.hide();
-      this.tutorial.show();
+      this.tutorial.show(tutorialPagesFor(id));
       this.syncUi();
       return;
     }
@@ -353,7 +354,7 @@ export class GameApp {
   private advanceToNextLevel(): void {
     const next = nextLevel(this.level.id);
     if (next) {
-      this.beginLevel(next.id);
+      this.requestLevel(next.id);
       return;
     }
     this.openMenu();

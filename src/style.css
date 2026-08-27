@@ -735,6 +735,94 @@ button.active,
   animation: tut-launch 5.2s linear infinite;
 }
 
+.tut-scroll-world {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -150px;
+  height: 360px;
+}
+
+.anim-scroll .tut-scroll-world {
+  animation: tut-scroll-pan 4.8s ease-in-out infinite;
+}
+
+.anim-scroll .tut-goal {
+  top: 8px;
+}
+
+.anim-scroll .tut-path {
+  top: 42px;
+  bottom: 48px;
+}
+
+.anim-scroll .tut-craft {
+  left: 50%;
+  top: auto;
+  bottom: 16px;
+}
+
+.tut-scroll-cues {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  z-index: 6;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  transform: translateY(-50%);
+}
+
+.tut-wheel {
+  position: relative;
+  width: 18px;
+  height: 28px;
+  border: 1px solid var(--cyan);
+  background: rgba(6, 12, 20, 0.88);
+  box-shadow: 0 0 8px rgba(61, 240, 255, 0.35);
+}
+
+.tut-wheel i {
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  width: 4px;
+  height: 10px;
+  margin-left: -2px;
+  background: var(--cyan);
+  animation: tut-wheel-notch 4.8s ease-in-out infinite;
+}
+
+.tut-swipe {
+  display: grid;
+  gap: 3px;
+  justify-items: center;
+}
+
+.tut-swipe b {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+}
+
+.tut-swipe b:first-child {
+  border-bottom: 8px solid var(--magenta);
+  animation: tut-swipe-up 4.8s ease-in-out infinite;
+}
+
+.tut-swipe b:last-child {
+  border-top: 8px solid var(--cyan);
+  animation: tut-swipe-down 4.8s ease-in-out infinite;
+}
+
+.tut-swipe span {
+  width: 2px;
+  height: 22px;
+  background: var(--cyan);
+  animation: tut-swipe-bar 4.8s ease-in-out infinite;
+}
+
 .tutorial-dots {
   display: flex;
   justify-content: center;
@@ -1051,5 +1139,80 @@ button.active,
   14%,
   100% {
     opacity: 0;
+  }
+}
+
+@keyframes tut-scroll-pan {
+  0%,
+  12% {
+    top: -150px;
+  }
+  48%,
+  62% {
+    top: 0;
+  }
+  88%,
+  100% {
+    top: -150px;
+  }
+}
+
+@keyframes tut-wheel-notch {
+  0%,
+  12% {
+    top: 12px;
+  }
+  48%,
+  62% {
+    top: 4px;
+  }
+  88%,
+  100% {
+    top: 12px;
+  }
+}
+
+@keyframes tut-swipe-up {
+  0%,
+  18%,
+  62%,
+  100% {
+    opacity: 0.25;
+  }
+  28%,
+  48% {
+    opacity: 1;
+  }
+}
+
+@keyframes tut-swipe-down {
+  0%,
+  48%,
+  100% {
+    opacity: 0.25;
+  }
+  12%,
+  18%,
+  78%,
+  88% {
+    opacity: 1;
+  }
+}
+
+@keyframes tut-swipe-bar {
+  0%,
+  12% {
+    transform: translateY(4px);
+    opacity: 0.55;
+  }
+  48%,
+  62% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+  88%,
+  100% {
+    transform: translateY(4px);
+    opacity: 0.55;
   }
 }
