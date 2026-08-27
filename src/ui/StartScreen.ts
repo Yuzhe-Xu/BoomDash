@@ -1,5 +1,7 @@
 import type { LevelDefinition } from "../level/LevelDefinition";
+import { starsForBestTime } from "../level/StarRating";
 import { loadProgress } from "../storage/ProgressStore";
+import { createStarRow } from "./StarRow";
 
 export class StartScreen {
   constructor(
@@ -46,9 +48,14 @@ export class StartScreen {
         name.textContent = level.name;
 
         const progress = document.createElement("span");
-        progress.className = "sector-best";
+        progress.className = "sector-progress";
         const bestTime = loadProgress(level.id).bestTime;
-        progress.textContent = bestTime === null ? "BEST --" : `BEST ${bestTime.toFixed(2)}s`;
+        progress.append(createStarRow(starsForBestTime(bestTime, level)));
+
+        const best = document.createElement("span");
+        best.className = "sector-best";
+        best.textContent = bestTime === null ? "BEST --" : `BEST ${bestTime.toFixed(2)}s`;
+        progress.append(best);
 
         button.append(name, progress);
         return button;

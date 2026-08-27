@@ -294,10 +294,60 @@ button.active,
   color: var(--cyan);
 }
 
+.sector-progress {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
 .sector-best {
   color: var(--muted);
   font-size: 11px;
   letter-spacing: 0.08em;
+}
+
+.star-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.star-row[hidden] {
+  display: none;
+}
+
+.star {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--muted);
+  background: transparent;
+  transform: rotate(45deg);
+}
+
+.star.filled {
+  border-color: var(--lime);
+  background: var(--lime);
+  box-shadow: 0 0 8px rgba(93, 255, 154, 0.45);
+}
+
+.sector-progress .star-row {
+  gap: 6px;
+}
+
+.sector-progress .star {
+  width: 8px;
+  height: 8px;
+}
+
+#result-stars {
+  margin: 2px 0 12px;
+  min-height: 14px;
+}
+
+#result-stars .star {
+  width: 12px;
+  height: 12px;
 }
 
 .panel-kicker {

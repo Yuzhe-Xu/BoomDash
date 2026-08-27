@@ -1,5 +1,7 @@
 import type { FailReason } from "../app/GamePhase";
+import type { StarCount } from "../level/StarRating";
 import type { RunState } from "../simulation/GameState";
+import { fillStarRow } from "./StarRow";
 
 const FAIL_COPY: Record<FailReason, string> = {
   "out-of-bounds": "飞船离开画面",
@@ -14,6 +16,7 @@ export class ResultPanel {
     private readonly title: HTMLElement,
     private readonly copy: HTMLElement,
     private readonly stats: HTMLElement,
+    private readonly stars: HTMLElement,
     private readonly pauseRoot: HTMLElement,
     private readonly nextButton: HTMLButtonElement,
     private readonly menuButton: HTMLButtonElement,
@@ -36,13 +39,14 @@ export class ResultPanel {
     this.menuButton.addEventListener("click", handlers.menu);
   }
 
-  render(state: RunState, bestTime: number | null, canAdvance = false): void {
+  render(state: RunState, bestTime: number | null, canAdvance = false, stars: StarCount = 0): void {
     const paused = state.phase === "paused";
     const ended = state.phase === "success" || state.phase === "failed";
     this.pauseRoot.hidden = !paused;
     this.root.hidden = !ended;
     this.nextButton.hidden = !(ended && state.phase === "success" && canAdvance);
     if (!ended) {
+      this.stars.hidden = true;
       return;
     }
 
@@ -54,6 +58,10 @@ export class ResultPanel {
     this.copy.textContent = success
       ? "终点捕获完成。"
       : FAIL_COPY[state.failReason ?? "out-of-bounds"];
+    this.stars.hidden = !success;
+    if (success) {
+      fillStarRow(this.stars, stars);
+    }
     const rows = [
       ["TIME", `${state.elapsed.toFixed(2)}s`],
       ["BOMBS", String(state.usedBombs)],
@@ -68,5 +76,6 @@ export class ResultPanel {
     this.pauseRoot.hidden = true;
     this.root.hidden = true;
     this.nextButton.hidden = true;
+    this.stars.hidden = true;
   }
 }

@@ -6,6 +6,7 @@ import type { LevelDefinition } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import { findLevel, levels, nextLevel } from "../level/LevelCatalog";
 import { level1, withDebugOverrides } from "../level/level1";
+import { starsForTime } from "../level/StarRating";
 import { CanvasRenderer } from "../rendering/CanvasRenderer";
 import { GameSimulation } from "../simulation/GameSimulation";
 import { FIXED_DT } from "../simulation/ShipSimulator";
@@ -73,6 +74,7 @@ export class GameApp {
       mustEl("#result-title"),
       mustEl("#result-copy"),
       mustEl("#result-stats"),
+      mustEl("#result-stars"),
       mustEl("#pause-menu"),
       mustEl<HTMLButtonElement>("#btn-next"),
       mustEl<HTMLButtonElement>("#btn-result-sectors"),
@@ -442,7 +444,12 @@ export class GameApp {
     this.planning.setDeleteEnabled(Boolean(state.selectedId) && planning);
     this.flight.render(state.bombs, (planning || flying) && state.bombs.length > 0, state.selectedId, planning);
     this.hud.render(state, this.level, this.audio.muted);
-    this.result.render(state, this.bestTime, Boolean(nextLevel(this.level.id)));
+    this.result.render(
+      state,
+      this.bestTime,
+      Boolean(nextLevel(this.level.id)),
+      state.phase === "success" ? starsForTime(state.elapsed, this.level) : 0,
+    );
   }
 }
 
