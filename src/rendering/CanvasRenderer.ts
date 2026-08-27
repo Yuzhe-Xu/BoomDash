@@ -1,4 +1,5 @@
-import type { LevelDefinition } from "../level/LevelDefinition";
+import { traceGoalCurve, traceGoalRegion } from "../level/GoalGeometry";
+import type { GoalRegion, LevelDefinition } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import type { Bomb, RunState } from "../simulation/GameState";
 import { lerp } from "../simulation/Vec2";
@@ -73,11 +74,11 @@ export class CanvasRenderer {
     this.drawBackdrop(cameraY, level.worldHeight);
     ctx.save();
     ctx.translate(0, -cameraY);
-    this.drawZone(
-      level.goal,
-      state.phase === "success" ? "#9dffc4" : "#5dff9a",
-      state.phase === "success",
-    );
+    const goalColor = state.phase === "success" ? "#9dffc4" : "#5dff9a";
+    const goalBright = state.phase === "success";
+    for (const region of level.goals) {
+      this.drawGoalRegion(region, goalColor, goalBright, level.worldHeight);
+    }
     this.effects.pushTrail(shipPos.x, shipPos.y, state.phase === "flying" || state.phase === "success");
     this.effects.draw(ctx, state.effects, dt);
 
@@ -131,19 +132,21 @@ export class CanvasRenderer {
     return stars;
   }
 
-  private drawZone(zone: LevelDefinition["goal"], color: string, bright = false): void {
+  private drawGoalRegion(
+    region: GoalRegion,
+    color: string,
+    bright = false,
+    worldHeight: number,
+  ): void {
     const { ctx } = this;
     ctx.save();
     ctx.beginPath();
-    ctx.ellipse(zone.cx, zone.cy, zone.rx, zone.ry, 0, 0, Math.PI, false);
-    ctx.lineTo(zone.cx - zone.rx, 0);
-    ctx.lineTo(zone.cx + zone.rx, 0);
-    ctx.closePath();
+    traceGoalRegion(ctx, region, LOGICAL_WIDTH, worldHeight);
     ctx.fillStyle = bright ? "rgba(93, 255, 154, 0.22)" : hexAlpha(color, 0.1);
     ctx.fill();
 
     ctx.beginPath();
-    ctx.ellipse(zone.cx, zone.cy, zone.rx, zone.ry, 0, 0, Math.PI, false);
+    traceGoalCurve(ctx, region);
     ctx.strokeStyle = color;
     ctx.lineWidth = 4;
     ctx.shadowColor = color;
@@ -221,14 +224,13 @@ export class CanvasRenderer {
 
   private drawGoalDebug(level: LevelDefinition): void {
     const { ctx } = this;
-    const { goal } = level;
     ctx.save();
-    ctx.fillStyle = "rgba(93, 255, 154, 0.12)";
-    ctx.beginPath();
-    ctx.ellipse(goal.cx, goal.cy, goal.rx, goal.ry, 0, 0, Math.PI, false);
-    ctx.lineTo(goal.cx - goal.rx, goal.cy);
-    ctx.closePath();
-    ctx.fill();
+    ctx.fillStyle = "rgba(255, 176, 32, 0.14)";
+    for (const region of level.goals) {
+      ctx.beginPath();
+      traceGoalRegion(ctx, region, LOGICAL_WIDTH, level.worldHeight);
+      ctx.fill();
+    }
     ctx.restore();
   }
 }

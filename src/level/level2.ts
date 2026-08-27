@@ -1,3 +1,4 @@
+import { topClosedQuadraticGoal } from "./GoalGeometry";
 import { type LevelDefinition } from "./LevelDefinition";
 
 export const level2: LevelDefinition = {
@@ -11,13 +12,7 @@ export const level2: LevelDefinition = {
     ry: 58,
     arc: "upper",
   },
-  goal: {
-    cx: 195,
-    cy: 34,
-    rx: 125,
-    ry: 58,
-    arc: "lower",
-  },
+  goals: [topClosedQuadraticGoal("goal-top", 70, 320, 92)],
   maxBombs: 5,
   unlimitedBombs: false,
   blastRadius: 110,

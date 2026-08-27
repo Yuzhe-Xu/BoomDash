@@ -1,4 +1,5 @@
-import type { ZoneDefinition } from "../level/LevelDefinition";
+import { circleHitsGoalRegion, distanceToPolygon, goalPolygon } from "../level/GoalGeometry";
+import type { GoalRegion } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import type { FailReason } from "../app/GamePhase";
 import type { Ship } from "./GameState";
@@ -9,39 +10,37 @@ export type LifecycleResult =
   | { kind: "success" }
   | { kind: "failed"; reason: FailReason };
 
-export function pointInLowerEllipse(
-  x: number,
-  y: number,
-  zone: ZoneDefinition,
+export function isInsideGoal(
+  ship: Ship,
+  region: GoalRegion,
+  worldHeight = LOGICAL_HEIGHT,
 ): boolean {
-  const dx = (x - zone.cx) / zone.rx;
-  const dy = (y - zone.cy) / zone.ry;
-  return dx * dx + dy * dy <= 1 && dy >= 0;
+  return circleHitsGoalRegion(
+    ship.position.x,
+    ship.position.y,
+    ship.radius,
+    region,
+    LOGICAL_WIDTH,
+    worldHeight,
+  );
 }
 
-export function isInsideGoal(ship: Ship, goal: ZoneDefinition): boolean {
-  if (pointInLowerEllipse(ship.position.x, ship.position.y, goal)) {
-    return true;
-  }
-
-  const expanded = {
-    ...goal,
-    rx: goal.rx + ship.radius,
-    ry: goal.ry + ship.radius,
-  };
-  const dx = (ship.position.x - expanded.cx) / expanded.rx;
-  const dy = (ship.position.y - expanded.cy) / expanded.ry;
-  return dx * dx + dy * dy <= 1 && ship.position.y - goal.cy >= -ship.radius;
+export function isInsideAnyGoal(
+  ship: Ship,
+  goals: GoalRegion[],
+  worldHeight = LOGICAL_HEIGHT,
+): boolean {
+  return goals.some((region) => isInsideGoal(ship, region, worldHeight));
 }
 
 export function evaluateLifecycle(
   ship: Ship,
-  goal: ZoneDefinition,
+  goals: GoalRegion[],
   elapsed: number,
   timeLimit: number,
   worldHeight = LOGICAL_HEIGHT,
 ): LifecycleResult {
-  if (isInsideGoal(ship, goal)) {
+  if (isInsideAnyGoal(ship, goals, worldHeight)) {
     return { kind: "success" };
   }
 
@@ -75,19 +74,33 @@ export function flightProgress(shipY: number, startY: number, goalY: number): nu
   return clamp01((startY - shipY) / span);
 }
 
-export function distanceToGoal(position: Vec2, goal: ZoneDefinition, shipRadius: number): number {
-  const dist = Math.hypot(position.x - goal.cx, position.y - goal.cy);
-  return Math.max(0, dist - goal.ry - shipRadius);
+export function distanceToGoal(
+  position: Vec2,
+  goals: GoalRegion[],
+  shipRadius: number,
+  worldHeight = LOGICAL_HEIGHT,
+): number {
+  let min = Number.POSITIVE_INFINITY;
+  for (const region of goals) {
+    const dist = distanceToPolygon(
+      position.x,
+      position.y,
+      goalPolygon(region, LOGICAL_WIDTH, worldHeight),
+    );
+    min = Math.min(min, Math.max(0, dist - shipRadius));
+  }
+  return min;
 }
 
 export function minSpeedToFinish(
   position: Vec2,
-  goal: ZoneDefinition,
+  goals: GoalRegion[],
   shipRadius: number,
   elapsed: number,
   timeLimit: number,
+  worldHeight = LOGICAL_HEIGHT,
 ): number {
-  const dist = distanceToGoal(position, goal, shipRadius);
+  const dist = distanceToGoal(position, goals, shipRadius, worldHeight);
   if (dist <= 0) {
     return 0;
   }

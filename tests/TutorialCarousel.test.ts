@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { level1 } from "../src/level/level1";
 import { level2 } from "../src/level/level2";
+import { level3 } from "../src/level/level3";
 import {
   LEVEL1_TUTORIAL_PAGES,
   LEVEL2_TUTORIAL_PAGES,
@@ -29,6 +30,7 @@ describe("tutorialPages", () => {
   it("appears before sectors that have briefing pages", () => {
     expect(shouldShowTutorial(level1.id)).toBe(true);
     expect(shouldShowTutorial(level2.id)).toBe(true);
+    expect(shouldShowTutorial(level3.id)).toBe(false);
     expect(shouldShowTutorial("missing")).toBe(false);
   });
 

@@ -83,7 +83,7 @@ export class GameSimulation {
 
     const result = evaluateLifecycle(
       this.state.ship,
-      this.level.goal,
+      this.level.goals,
       this.state.elapsed,
       this.level.timeLimit,
       this.level.worldHeight,

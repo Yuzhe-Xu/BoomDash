@@ -11,12 +11,31 @@ export type ZoneDefinition = {
   arc: ArcKind;
 };
 
+export type Point = {
+  x: number;
+  y: number;
+};
+
+export type CurveCommand =
+  | { kind: "line"; to: Point }
+  | { kind: "quadratic"; control: Point; to: Point }
+  | { kind: "cubic"; c1: Point; c2: Point; to: Point };
+
+export type MapEdge = "top" | "right" | "bottom" | "left";
+
+export type GoalRegion = {
+  id: string;
+  start: Point;
+  curve: CurveCommand[];
+  closeEdges: MapEdge[];
+};
+
 export type LevelDefinition = {
   id: string;
   name: string;
   worldHeight: number;
   start: ZoneDefinition;
-  goal: ZoneDefinition;
+  goals: GoalRegion[];
   maxBombs: number;
   unlimitedBombs: boolean;
   blastRadius: number;
