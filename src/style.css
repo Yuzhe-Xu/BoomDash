@@ -142,36 +142,13 @@ body,
   text-overflow: ellipsis;
 }
 
-#hud-ship {
-  display: flex;
-  gap: 8px;
-  pointer-events: none;
-}
-
-#hud-speed,
-#hud-min {
-  display: inline-block;
-  padding: 6px 8px;
-  border: 1px solid rgba(255, 176, 32, 0.38);
-  background: var(--panel);
-  color: var(--amber);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-}
-
-#hud-speed.ok {
-  color: var(--lime);
-  border-color: rgba(93, 255, 154, 0.5);
-}
-
-#hud-speed.warn {
+#hud-stat.warn {
   color: #ff4d6d;
   border-color: rgba(255, 77, 109, 0.55);
-  animation: hud-speed-warn 0.5s step-end infinite;
+  animation: hud-stat-warn 0.5s step-end infinite;
 }
 
-@keyframes hud-speed-warn {
+@keyframes hud-stat-warn {
   0%,
   100% {
     opacity: 1;
@@ -210,8 +187,7 @@ body,
 #bomb-rail[hidden],
 #planning-bar[hidden],
 .overlay[hidden],
-#debug[hidden],
-#hud-ship[hidden] {
+#debug[hidden] {
   display: none !important;
 }
 

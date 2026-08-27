@@ -59,9 +59,6 @@ export class GameApp {
       mustEl("#hud-stat"),
       mustEl("#level-tag"),
       mustEl<HTMLButtonElement>("#btn-mute"),
-      mustEl("#hud-ship"),
-      mustEl("#hud-speed"),
-      mustEl("#hud-min"),
     );
     this.planning = new PlanningControls(
       mustEl("#planning-bar"),
