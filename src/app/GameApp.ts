@@ -1,6 +1,7 @@
 import { AudioSystem } from "../audio/AudioSystem";
 import { eventFromKey } from "../input/KeyboardInput";
 import { pickBombAt, PointerInput } from "../input/PointerInput";
+import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import { level1, withDebugOverrides } from "../level/level1";
 import { CanvasRenderer } from "../rendering/CanvasRenderer";
 import { GameSimulation } from "../simulation/GameSimulation";
@@ -32,6 +33,7 @@ export class GameApp {
   private bestTime: number | null;
   private lastPhase = this.sim.state.phase;
   private seenFx = new Set<string>();
+  private readonly stage: HTMLElement;
 
   constructor(private readonly root: HTMLElement) {
     const canvas = mustEl<HTMLCanvasElement>("#game");
@@ -62,10 +64,12 @@ export class GameApp {
       mustEl("#pause-menu"),
     );
     this.debugView = new DebugOverlay(mustEl("#debug"));
+    this.stage = mustEl("#stage");
     const progress = loadProgress(this.level.id);
     this.bestTime = progress.bestTime;
     this.audio.setMuted(progress.muted);
     this.bind(canvas);
+    this.layoutStage();
     this.syncUi();
   }
 
@@ -188,8 +192,23 @@ export class GameApp {
       this.sim.enqueue(mapped);
     });
 
-    window.addEventListener("resize", () => this.renderer.resize());
+    const layout = () => {
+      this.layoutStage();
+      this.renderer.resize();
+    };
+    window.addEventListener("resize", layout);
+    window.visualViewport?.addEventListener("resize", layout);
+    new ResizeObserver(layout).observe(this.stage.parentElement ?? this.root);
     this.root.addEventListener("contextmenu", (event) => event.preventDefault());
+  }
+
+  private layoutStage(): void {
+    const box = this.stage.parentElement ?? this.root;
+    const scale = Math.min(box.clientWidth / LOGICAL_WIDTH, box.clientHeight / LOGICAL_HEIGHT);
+    this.stage.style.setProperty(
+      "--stage-scale",
+      String(Number.isFinite(scale) && scale > 0 ? scale : 1),
+    );
   }
 
   private togglePause(): void {

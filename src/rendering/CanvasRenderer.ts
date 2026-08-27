@@ -20,8 +20,9 @@ export class CanvasRenderer {
   resize(): void {
     const rect = this.canvas.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const width = Math.max(1, Math.round(rect.width * dpr));
-    const height = Math.max(1, Math.round(rect.height * dpr));
+    const cssScale = Math.min(rect.width / LOGICAL_WIDTH, rect.height / LOGICAL_HEIGHT);
+    const width = Math.max(1, Math.round(LOGICAL_WIDTH * cssScale * dpr));
+    const height = Math.max(1, Math.round(LOGICAL_HEIGHT * cssScale * dpr));
     if (this.canvas.width !== width || this.canvas.height !== height) {
       this.canvas.width = width;
       this.canvas.height = height;
@@ -41,14 +42,11 @@ export class CanvasRenderer {
   render(state: RunState, level: LevelDefinition, alpha: number, dt: number, debug: boolean): void {
     this.resize();
     const { ctx } = this;
-    ctx.setTransform(
+    const scale = Math.min(
       this.canvas.width / LOGICAL_WIDTH,
-      0,
-      0,
       this.canvas.height / LOGICAL_HEIGHT,
-      0,
-      0,
     );
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
     for (const fx of state.effects) {
       if (!this.seenFx.has(fx.id)) {
