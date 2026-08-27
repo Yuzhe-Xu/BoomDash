@@ -4,6 +4,7 @@ import { level1 } from "../src/level/level1";
 import { level2 } from "../src/level/level2";
 import { level3 } from "../src/level/level3";
 import { level4 } from "../src/level/level4";
+import { level5 } from "../src/level/level5";
 import {
   distanceToGoal,
   evaluateLifecycle,
@@ -130,6 +131,24 @@ describe("sector four goal", () => {
       kind: "success",
     });
     expect(evaluateLifecycle(shipAt(195, -20), level4.goals, 1, level4.timeLimit)).toEqual({
+      kind: "failed",
+      reason: "overshoot",
+    });
+  });
+});
+
+describe("sector five goal", () => {
+  it("accepts the floating center circle and rejects a graze beside or above it", () => {
+    expect(isInsideAnyGoal(shipAt(195, 111), level5.goals, level5.worldHeight)).toBe(true);
+    expect(isInsideAnyGoal(shipAt(50, 111), level5.goals, level5.worldHeight)).toBe(false);
+    expect(isInsideAnyGoal(shipAt(195, 20), level5.goals, level5.worldHeight)).toBe(false);
+    expect(evaluateLifecycle(shipAt(195, 111), level5.goals, 1, level5.timeLimit, level5.worldHeight)).toEqual({
+      kind: "success",
+    });
+    expect(evaluateLifecycle(shipAt(195, 20), level5.goals, 1, level5.timeLimit, level5.worldHeight)).toEqual({
+      kind: "alive",
+    });
+    expect(evaluateLifecycle(shipAt(195, -20), level5.goals, 1, level5.timeLimit, level5.worldHeight)).toEqual({
       kind: "failed",
       reason: "overshoot",
     });

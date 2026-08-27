@@ -85,6 +85,7 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
   await expect(page.getByRole("button", { name: /SECTOR 02/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 03/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 04/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 05/ })).toBeEnabled();
 
   await page.getByRole("button", { name: /SECTOR 02/ }).click();
   await expect(page.locator("#tutorial")).toBeVisible();

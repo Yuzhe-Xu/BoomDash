@@ -8,10 +8,16 @@ import { FIXED_DT } from "../src/simulation/ShipSimulator";
 
 describe("level 4 catalog", () => {
   it("is registered after sector three and stays unlocked", () => {
-    expect(levels.map((level) => level.id)).toEqual(["level-1", "level-2", "level-3", "level-4"]);
+    expect(levels.map((level) => level.id)).toEqual([
+      "level-1",
+      "level-2",
+      "level-3",
+      "level-4",
+      "level-5",
+    ]);
     expect(findLevel("level-4")).toBe(level4);
     expect(nextLevel(level3.id)).toBe(level4);
-    expect(nextLevel(level4.id)).toBeUndefined();
+    expect(nextLevel(level4.id)?.id).toBe("level-5");
   });
 
   it("uses a first-sector-length map with a smaller left-biased top goal", () => {

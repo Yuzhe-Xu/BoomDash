@@ -8,7 +8,13 @@ import { FIXED_DT } from "../src/simulation/ShipSimulator";
 
 describe("level 3 catalog", () => {
   it("is registered after sector two and stays unlocked", () => {
-    expect(levels.map((level) => level.id)).toEqual(["level-1", "level-2", "level-3", "level-4"]);
+    expect(levels.map((level) => level.id)).toEqual([
+      "level-1",
+      "level-2",
+      "level-3",
+      "level-4",
+      "level-5",
+    ]);
     expect(findLevel("level-3")).toBe(level3);
     expect(nextLevel(level2.id)).toBe(level3);
     expect(nextLevel(level3.id)?.id).toBe("level-4");

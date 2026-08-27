@@ -65,6 +65,48 @@ export function cornerQuadraticGoal(
   };
 }
 
+const CIRCLE_KAPPA = 0.5522847498307936;
+
+export function closedCubicCircleGoal(
+  id: string,
+  cx: number,
+  cy: number,
+  radius: number,
+): GoalRegion {
+  const k = radius * CIRCLE_KAPPA;
+  return {
+    id,
+    start: { x: cx, y: cy - radius },
+    curve: [
+      {
+        kind: "cubic",
+        c1: { x: cx + k, y: cy - radius },
+        c2: { x: cx + radius, y: cy - k },
+        to: { x: cx + radius, y: cy },
+      },
+      {
+        kind: "cubic",
+        c1: { x: cx + radius, y: cy + k },
+        c2: { x: cx + k, y: cy + radius },
+        to: { x: cx, y: cy + radius },
+      },
+      {
+        kind: "cubic",
+        c1: { x: cx - k, y: cy + radius },
+        c2: { x: cx - radius, y: cy + k },
+        to: { x: cx - radius, y: cy },
+      },
+      {
+        kind: "cubic",
+        c1: { x: cx - radius, y: cy - k },
+        c2: { x: cx - k, y: cy - radius },
+        to: { x: cx, y: cy - radius },
+      },
+    ],
+    closeEdges: [],
+  };
+}
+
 export function closurePoints(
   to: Point,
   edges: MapEdge[],
