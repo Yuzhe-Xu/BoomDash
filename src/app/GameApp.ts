@@ -1,7 +1,10 @@
 import { AudioSystem } from "../audio/AudioSystem";
 import { eventFromKey } from "../input/KeyboardInput";
+import { Camera } from "../input/Camera";
 import { pickBombAt, PointerInput } from "../input/PointerInput";
+import type { LevelDefinition } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
+import { findLevel, levels, nextLevel } from "../level/LevelCatalog";
 import { level1, withDebugOverrides } from "../level/level1";
 import { CanvasRenderer } from "../rendering/CanvasRenderer";
 import { GameSimulation } from "../simulation/GameSimulation";
@@ -12,18 +15,21 @@ import { FlightControls } from "../ui/FlightControls";
 import { Hud } from "../ui/Hud";
 import { PlanningControls } from "../ui/PlanningControls";
 import { ResultPanel } from "../ui/ResultPanel";
+import { StartScreen } from "../ui/StartScreen";
 
 export class GameApp {
   private readonly debug = new URLSearchParams(window.location.search).get("debug") === "1";
-  private readonly level = withDebugOverrides(level1, this.debug);
-  private readonly sim = new GameSimulation(this.level);
+  private level: LevelDefinition = withDebugOverrides(level1, this.debug);
+  private sim = new GameSimulation(this.level);
   private readonly renderer: CanvasRenderer;
   private readonly pointer: PointerInput;
+  private readonly camera = new Camera();
   private readonly audio = new AudioSystem();
   private readonly hud: Hud;
   private readonly planning: PlanningControls;
   private readonly flight: FlightControls;
   private readonly result: ResultPanel;
+  private readonly startScreen: StartScreen;
   private readonly debugView: DebugOverlay;
   private accumulator = 0;
   private previousTime = performance.now();
@@ -34,6 +40,8 @@ export class GameApp {
   private lastPhase = this.sim.state.phase;
   private seenFx = new Set<string>();
   private readonly stage: HTMLElement;
+  private started = false;
+  private pointerPrevious: { x: number; y: number } | null = null;
 
   constructor(private readonly root: HTMLElement) {
     const canvas = mustEl<HTMLCanvasElement>("#game");
@@ -65,9 +73,22 @@ export class GameApp {
       mustEl("#result-copy"),
       mustEl("#result-stats"),
       mustEl("#pause-menu"),
+      mustEl<HTMLButtonElement>("#btn-next"),
+      mustEl<HTMLButtonElement>("#btn-result-sectors"),
+    );
+    this.startScreen = new StartScreen(
+      mustEl("#start-screen"),
+      mustEl("#start-home"),
+      mustEl("#sector-select"),
+      mustEl("#sector-list"),
+      mustEl<HTMLButtonElement>("#btn-start"),
+      mustEl<HTMLButtonElement>("#btn-sectors"),
+      mustEl<HTMLButtonElement>("#btn-sectors-back"),
     );
     this.debugView = new DebugOverlay(mustEl("#debug"));
     this.stage = mustEl("#stage");
+    this.camera.reset(this.level.worldHeight);
+    this.startScreen.render(levels);
     const progress = loadProgress(this.level.id);
     this.bestTime = progress.bestTime;
     this.audio.setMuted(progress.muted);
@@ -95,6 +116,7 @@ export class GameApp {
       remove: () => this.sim.enqueue({ type: "delete" }),
       launch: () => {
         this.audio.unlock();
+        this.camera.reset(this.level.worldHeight);
         this.sim.enqueue({ type: "launch" });
       },
     });
@@ -109,17 +131,30 @@ export class GameApp {
       resume: () => this.sim.enqueue({ type: "resume" }),
       retry: () => this.retry(),
       redeploy: () => this.redeploy(),
+      next: () => this.advanceToNextLevel(),
+      menu: () => this.openMenu(),
+    });
+    this.startScreen.bind({
+      start: () => this.beginLevel(level1.id),
+      openSelector: () => this.startScreen.showSelector(),
+      selectLevel: (id) => this.beginLevel(id),
+      back: () => this.startScreen.showHome(),
     });
 
     canvas.addEventListener("pointerdown", (event) => {
       event.preventDefault();
+      if (!this.started) {
+        return;
+      }
       this.audio.unlock();
       const point = this.pointer.clientToLogical(event.clientX, event.clientY);
       if (!point) {
         return;
       }
-      const bombId = pickBombAt(point, this.sim.state.bombs, this.pointer.hitRadius());
+      const worldPoint = this.camera.worldPoint(point);
+      const bombId = pickBombAt(worldPoint, this.sim.state.bombs, this.pointer.hitRadius());
       this.pointer.begin(event.pointerId, point, bombId);
+      this.pointerPrevious = point;
       canvas.setPointerCapture(event.pointerId);
       if (this.sim.state.phase === "flying" && bombId) {
         this.sim.enqueue({ type: "detonate", id: bombId });
@@ -131,28 +166,52 @@ export class GameApp {
 
     canvas.addEventListener("pointermove", (event) => {
       const point = this.pointer.clientToLogical(event.clientX, event.clientY);
-      if (!point) {
+      if (!point || !this.started) {
         return;
       }
+      const previous = this.pointerPrevious;
       const session = this.pointer.move(event.pointerId, point);
+      this.pointerPrevious = point;
       if (session.kind === "drag" && session.bombId) {
-        this.sim.enqueue({ type: "move", id: session.bombId, x: point.x, y: point.y });
+        const worldPoint = this.camera.worldPoint(point);
+        this.sim.enqueue({ type: "move", id: session.bombId, x: worldPoint.x, y: worldPoint.y });
+      } else if (session.kind === "place" && session.moved && previous) {
+        this.camera.panBy(point.y - previous.y, this.level.worldHeight);
       }
     });
 
     const endPointer = (event: PointerEvent) => {
       const session = this.pointer.end(event.pointerId);
+      this.pointerPrevious = null;
+      if (!this.started) {
+        return;
+      }
       if (session.kind === "place" && !session.moved && this.sim.state.phase === "planning") {
         const canPlace =
           this.level.unlimitedBombs || this.sim.state.bombs.length < this.level.maxBombs;
         if (canPlace) {
-          this.sim.enqueue({ type: "place", x: session.start.x, y: session.start.y });
+          const worldPoint = this.camera.worldPoint(session.start);
+          this.sim.enqueue({ type: "place", x: worldPoint.x, y: worldPoint.y });
           this.audio.place();
         }
       }
     };
     canvas.addEventListener("pointerup", endPointer);
-    canvas.addEventListener("pointercancel", () => this.pointer.cancel());
+    canvas.addEventListener("pointercancel", () => {
+      this.pointer.cancel();
+      this.pointerPrevious = null;
+    });
+    canvas.addEventListener(
+      "wheel",
+      (event) => {
+        if (!this.started) {
+          return;
+        }
+        event.preventDefault();
+        this.camera.panBy(event.deltaY, this.level.worldHeight);
+      },
+      { passive: false },
+    );
 
     window.addEventListener("keydown", (event) => {
       if (event.repeat) {
@@ -227,13 +286,50 @@ export class GameApp {
   private retry(): void {
     this.renderer.resetVisuals();
     this.seenFx.clear();
+    this.camera.reset(this.level.worldHeight);
     this.sim.enqueue({ type: "retry" });
   }
 
   private redeploy(): void {
     this.renderer.resetVisuals();
     this.seenFx.clear();
+    this.camera.reset(this.level.worldHeight);
     this.sim.enqueue({ type: "redeploy" });
+  }
+
+  private beginLevel(id: string): void {
+    const definition = findLevel(id);
+    if (!definition) {
+      return;
+    }
+    this.audio.unlock();
+    this.level = withDebugOverrides(definition, this.debug);
+    this.sim = new GameSimulation(this.level);
+    this.bestTime = loadProgress(this.level.id).bestTime;
+    this.lastPhase = this.sim.state.phase;
+    this.seenFx.clear();
+    this.renderer.resetVisuals();
+    this.camera.reset(this.level.worldHeight);
+    this.started = true;
+    this.startScreen.hide();
+    this.syncUi();
+  }
+
+  private advanceToNextLevel(): void {
+    const next = nextLevel(this.level.id);
+    if (next) {
+      this.beginLevel(next.id);
+      return;
+    }
+    this.openMenu();
+  }
+
+  private openMenu(): void {
+    this.started = false;
+    this.camera.reset(this.level.worldHeight);
+    this.startScreen.render(levels);
+    this.startScreen.showHome();
+    this.syncUi();
   }
 
   private frame = (now: number): void => {
@@ -250,8 +346,11 @@ export class GameApp {
     }
 
     this.observePhase();
+    if (this.sim.state.phase === "flying") {
+      this.camera.follow(this.sim.state.ship.position.y, this.level.worldHeight);
+    }
     const alpha = this.sim.state.phase === "flying" ? this.accumulator / FIXED_DT : 1;
-    this.renderer.render(this.sim.state, this.level, alpha, frameDelta, this.debug);
+    this.renderer.render(this.sim.state, this.level, alpha, frameDelta, this.debug, this.camera.offsetY);
     this.syncUi();
     this.frames += 1;
     if (now - this.fpsStamp >= 500) {
@@ -259,7 +358,7 @@ export class GameApp {
       this.frames = 0;
       this.fpsStamp = now;
     }
-    this.debugView.render(this.sim.state, this.level, this.fps, this.debug);
+    this.debugView.render(this.sim.state, this.level, this.fps, this.debug, this.camera.offsetY);
     requestAnimationFrame(this.frame);
   };
 
@@ -291,13 +390,21 @@ export class GameApp {
 
   private syncUi(): void {
     const { state } = this.sim;
+    this.stage.classList.toggle("menu-mode", !this.started);
+    if (!this.started) {
+      this.planning.setVisible(false);
+      this.flight.render([], false);
+      this.hud.render(state, this.level, this.audio.muted);
+      this.result.hide();
+      return;
+    }
     const planning = state.phase === "planning" || (state.phase === "paused" && state.resumePhase === "planning");
     const flying = state.phase === "flying" || (state.phase === "paused" && state.resumePhase === "flying");
     this.planning.setVisible(planning);
     this.planning.setDeleteEnabled(Boolean(state.selectedId) && planning);
     this.flight.render(state.bombs, (planning || flying) && state.bombs.length > 0, state.selectedId, planning);
     this.hud.render(state, this.level, this.audio.muted);
-    this.result.render(state, this.bestTime);
+    this.result.render(state, this.bestTime, Boolean(nextLevel(this.level.id)));
   }
 }
 

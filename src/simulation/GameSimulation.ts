@@ -86,6 +86,7 @@ export class GameSimulation {
       this.level.goal,
       this.state.elapsed,
       this.level.timeLimit,
+      this.level.worldHeight,
     );
 
     if (result.kind === "success") {
@@ -209,7 +210,7 @@ export class GameSimulation {
     if (!this.level.unlimitedBombs && this.state.bombs.length >= this.level.maxBombs) {
       return;
     }
-    const position = clampToCanvas(x, y);
+    const position = clampToCanvas(x, y, this.level.worldHeight);
     const id = `b${this.state.nextBombId}`;
     this.state.nextBombId += 1;
     this.state.bombs = [
@@ -228,7 +229,7 @@ export class GameSimulation {
     if (this.state.phase !== "planning") {
       return;
     }
-    const position = clampToCanvas(x, y);
+    const position = clampToCanvas(x, y, this.level.worldHeight);
     this.state.bombs = this.state.bombs.map((bomb) =>
       bomb.id === id ? { ...bomb, position } : bomb,
     );

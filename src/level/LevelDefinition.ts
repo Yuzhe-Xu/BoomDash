@@ -14,6 +14,7 @@ export type ZoneDefinition = {
 export type LevelDefinition = {
   id: string;
   name: string;
+  worldHeight: number;
   start: ZoneDefinition;
   goal: ZoneDefinition;
   maxBombs: number;
@@ -26,9 +27,13 @@ export type LevelDefinition = {
   speedCap: number;
 };
 
-export function clampToCanvas(x: number, y: number): { x: number; y: number } {
+export function clampToCanvas(
+  x: number,
+  y: number,
+  worldHeight = LOGICAL_HEIGHT,
+): { x: number; y: number } {
   return {
     x: Math.min(LOGICAL_WIDTH, Math.max(0, x)),
-    y: Math.min(LOGICAL_HEIGHT, Math.max(0, y)),
+    y: Math.min(worldHeight, Math.max(0, y)),
   };
 }

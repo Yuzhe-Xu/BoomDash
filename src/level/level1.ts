@@ -3,6 +3,7 @@ import { LOGICAL_HEIGHT, LOGICAL_WIDTH, type LevelDefinition } from "./LevelDefi
 export const level1: LevelDefinition = {
   id: "level-1",
   name: "SECTOR 01",
+  worldHeight: LOGICAL_HEIGHT,
   start: {
     cx: LOGICAL_WIDTH * 0.5,
     cy: 810,

@@ -65,6 +65,13 @@ body,
   box-shadow: 0 0 0 1px rgba(61, 240, 255, 0.12), 0 0 48px rgba(61, 240, 255, 0.08);
 }
 
+#stage.menu-mode #hud-top,
+#stage.menu-mode #hud-bottom,
+#stage.menu-mode #bomb-rail,
+#stage.menu-mode #debug {
+  display: none !important;
+}
+
 #game {
   display: block;
   width: 100%;
@@ -266,12 +273,55 @@ button.active,
   background: rgba(3, 5, 8, 0.62);
 }
 
+#start-screen {
+  z-index: 5;
+  background: rgba(3, 5, 8, 0.84);
+}
+
 .panel {
   width: min(100%, 300px);
   padding: 22px 18px 18px;
   border: 1px solid var(--line);
   background: rgba(6, 10, 16, 0.92);
   box-shadow: 0 0 32px rgba(61, 240, 255, 0.08);
+}
+
+.start-panel {
+  width: min(100%, 320px);
+}
+
+.start-panel h1 {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-family: "Orbitron", sans-serif;
+  font-size: 30px;
+  letter-spacing: 0.08em;
+}
+
+.sector-list {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.sector-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 12px;
+  text-align: left;
+}
+
+.sector-name {
+  color: var(--cyan);
+}
+
+.sector-best {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
 }
 
 .panel-kicker {

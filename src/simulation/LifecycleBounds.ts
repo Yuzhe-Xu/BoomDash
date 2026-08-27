@@ -39,6 +39,7 @@ export function evaluateLifecycle(
   goal: ZoneDefinition,
   elapsed: number,
   timeLimit: number,
+  worldHeight = LOGICAL_HEIGHT,
 ): LifecycleResult {
   if (isInsideGoal(ship, goal)) {
     return { kind: "success" };
@@ -55,7 +56,7 @@ export function evaluateLifecycle(
     return { kind: "failed", reason: "out-of-bounds" };
   }
 
-  if (y - r > LOGICAL_HEIGHT) {
+  if (y - r > worldHeight) {
     return { kind: "failed", reason: "out-of-bounds" };
   }
 

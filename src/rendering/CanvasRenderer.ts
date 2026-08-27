@@ -8,7 +8,7 @@ const STAR_SEED = 1801;
 
 export class CanvasRenderer {
   readonly effects = new EffectsRenderer();
-  private readonly stars = createStars(72);
+  private readonly stars = new Map<number, Array<{ x: number; y: number; s: number; a: number }>>();
   private seenFx = new Set<string>();
   private launchFlash = 0;
 
@@ -39,7 +39,14 @@ export class CanvasRenderer {
     this.launchFlash = 0;
   }
 
-  render(state: RunState, level: LevelDefinition, alpha: number, dt: number, debug: boolean): void {
+  render(
+    state: RunState,
+    level: LevelDefinition,
+    alpha: number,
+    dt: number,
+    debug: boolean,
+    cameraY = 0,
+  ): void {
     this.resize();
     const { ctx } = this;
     const scale = Math.min(
@@ -63,13 +70,24 @@ export class CanvasRenderer {
         : state.ship.position;
 
     ctx.clearRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
-    this.drawBackdrop();
-    this.drawZone(level.goal, state.phase === "success" ? "#9dffc4" : "#5dff9a", state.phase === "success");
+    this.drawBackdrop(cameraY, level.worldHeight);
+    ctx.save();
+    ctx.translate(0, -cameraY);
+    this.drawZone(
+      level.goal,
+      state.phase === "success" ? "#9dffc4" : "#5dff9a",
+      state.phase === "success",
+    );
     this.effects.pushTrail(shipPos.x, shipPos.y, state.phase === "flying" || state.phase === "success");
     this.effects.draw(ctx, state.effects, dt);
 
     for (const bomb of state.bombs) {
-      this.drawBomb(bomb, state.selectedId === bomb.id, level.blastRadius, state.phase === "planning");
+      this.drawBomb(
+        bomb,
+        state.selectedId === bomb.id,
+        level.blastRadius,
+        state.phase === "planning",
+      );
     }
 
     this.drawShip(shipPos.x, shipPos.y, state.ship.velocity.x, state.ship.velocity.y, state.phase);
@@ -77,9 +95,10 @@ export class CanvasRenderer {
       this.drawGoalDebug(level);
       this.effects.impulseHint(ctx, state.effects);
     }
+    ctx.restore();
   }
 
-  private drawBackdrop(): void {
+  private drawBackdrop(cameraY: number, worldHeight: number): void {
     const { ctx } = this;
     const g = ctx.createLinearGradient(0, 0, 0, LOGICAL_HEIGHT);
     g.addColorStop(0, "#0a1018");
@@ -87,15 +106,29 @@ export class CanvasRenderer {
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
 
-    for (const star of this.stars) {
+    for (const star of this.starsFor(worldHeight)) {
+      const y = star.y - cameraY;
+      if (y < -star.s || y > LOGICAL_HEIGHT) {
+        continue;
+      }
       ctx.fillStyle = `rgba(210, 240, 255, ${star.a})`;
-      ctx.fillRect(star.x, star.y, star.s, star.s);
+      ctx.fillRect(star.x, y, star.s, star.s);
     }
 
     if (this.launchFlash > 0) {
       ctx.fillStyle = `rgba(61, 240, 255, ${this.launchFlash * 0.18})`;
       ctx.fillRect(0, LOGICAL_HEIGHT - 160, LOGICAL_WIDTH, 160);
     }
+  }
+
+  private starsFor(worldHeight: number): Array<{ x: number; y: number; s: number; a: number }> {
+    const existing = this.stars.get(worldHeight);
+    if (existing) {
+      return existing;
+    }
+    const stars = createStars(Math.ceil((72 * worldHeight) / LOGICAL_HEIGHT), worldHeight);
+    this.stars.set(worldHeight, stars);
+    return stars;
   }
 
   private drawZone(zone: LevelDefinition["goal"], color: string, bright = false): void {
@@ -200,7 +233,10 @@ export class CanvasRenderer {
   }
 }
 
-function createStars(count: number): Array<{ x: number; y: number; s: number; a: number }> {
+function createStars(
+  count: number,
+  worldHeight: number,
+): Array<{ x: number; y: number; s: number; a: number }> {
   let seed = STAR_SEED;
   const rand = () => {
     seed = (seed * 16807) % 2147483647;
@@ -208,7 +244,7 @@ function createStars(count: number): Array<{ x: number; y: number; s: number; a:
   };
   return Array.from({ length: count }, () => ({
     x: rand() * LOGICAL_WIDTH,
-    y: rand() * LOGICAL_HEIGHT,
+    y: rand() * worldHeight,
     s: rand() > 0.82 ? 2 : 1,
     a: 0.25 + rand() * 0.65,
   }));

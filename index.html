@@ -8,7 +8,7 @@
     />
     <meta name="theme-color" content="#07080d" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <title>BOOMDASH // SECTOR 01</title>
+    <title>BOOMDASH // FLIGHT CONTROL</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -60,10 +60,31 @@
               <p class="panel-kicker">SYSTEM</p>
               <h2>PAUSED</h2>
               <p id="pause-copy" class="panel-copy">Simulation frozen.</p>
-              <div class="panel-actions">
-                <button id="btn-resume" class="primary" type="button">RESUME</button>
-                <button id="btn-pause-retry" type="button">RETRY</button>
-                <button id="btn-pause-redeploy" type="button">REDEPLOY</button>
+                <div class="panel-actions">
+                  <button id="btn-resume" class="primary" type="button">RESUME</button>
+                  <button id="btn-pause-retry" type="button">RETRY</button>
+                  <button id="btn-pause-redeploy" type="button">REDEPLOY</button>
+                  <button id="btn-pause-menu" type="button">MAIN MENU</button>
+                </div>
+            </div>
+          </section>
+
+          <section id="start-screen" class="overlay">
+            <div class="panel start-panel">
+              <div id="start-home">
+                <p class="panel-kicker">NAVIGATION SYSTEM</p>
+                <h1>BOOMDASH</h1>
+                <p class="panel-copy">SECTOR RUN // FLIGHT CONTROL</p>
+                <div class="panel-actions">
+                  <button id="btn-start" class="primary" type="button">START</button>
+                  <button id="btn-sectors" type="button">SECTORS</button>
+                </div>
+              </div>
+              <div id="sector-select" hidden>
+                <p class="panel-kicker">MISSION SELECT</p>
+                <h2>SECTORS</h2>
+                <div id="sector-list" class="sector-list"></div>
+                <button id="btn-sectors-back" type="button">BACK</button>
               </div>
             </div>
           </section>
@@ -77,6 +98,8 @@
               <div class="panel-actions">
                 <button id="btn-retry" type="button">RETRY</button>
                 <button id="btn-redeploy" class="primary" type="button">REDEPLOY</button>
+                <button id="btn-next" class="primary" type="button" hidden>NEXT SECTOR</button>
+                <button id="btn-result-sectors" type="button">SECTORS</button>
               </div>
             </div>
           </section>

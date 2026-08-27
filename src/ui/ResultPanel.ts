@@ -15,25 +15,33 @@ export class ResultPanel {
     private readonly copy: HTMLElement,
     private readonly stats: HTMLElement,
     private readonly pauseRoot: HTMLElement,
+    private readonly nextButton: HTMLButtonElement,
+    private readonly menuButton: HTMLButtonElement,
   ) {}
 
   bind(handlers: {
     resume: () => void;
     retry: () => void;
     redeploy: () => void;
+    next: () => void;
+    menu: () => void;
   }): void {
     document.getElementById("btn-resume")?.addEventListener("click", handlers.resume);
     document.getElementById("btn-retry")?.addEventListener("click", handlers.retry);
     document.getElementById("btn-redeploy")?.addEventListener("click", handlers.redeploy);
     document.getElementById("btn-pause-retry")?.addEventListener("click", handlers.retry);
     document.getElementById("btn-pause-redeploy")?.addEventListener("click", handlers.redeploy);
+    document.getElementById("btn-pause-menu")?.addEventListener("click", handlers.menu);
+    this.nextButton.addEventListener("click", handlers.next);
+    this.menuButton.addEventListener("click", handlers.menu);
   }
 
-  render(state: RunState, bestTime: number | null): void {
+  render(state: RunState, bestTime: number | null, canAdvance = false): void {
     const paused = state.phase === "paused";
     const ended = state.phase === "success" || state.phase === "failed";
     this.pauseRoot.hidden = !paused;
     this.root.hidden = !ended;
+    this.nextButton.hidden = !(ended && state.phase === "success" && canAdvance);
     if (!ended) {
       return;
     }
@@ -54,5 +62,11 @@ export class ResultPanel {
       rows.push(["BEST", `${bestTime.toFixed(2)}s`]);
     }
     this.stats.innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+  }
+
+  hide(): void {
+    this.pauseRoot.hidden = true;
+    this.root.hidden = true;
+    this.nextButton.hidden = true;
   }
 }

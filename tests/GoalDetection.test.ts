@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { level1 } from "../src/level/level1";
+import { level2 } from "../src/level/level2";
 import {
   distanceToGoal,
   evaluateLifecycle,
@@ -58,6 +59,22 @@ describe("GoalDetection", () => {
       kind: "failed",
       reason: "timeout",
     });
+  });
+
+  it("uses the configured world height for a tall sector", () => {
+    expect(level2.worldHeight).toBe(1688);
+    expect(level2.start.cy - level2.goal.cy).toBeGreaterThan(
+      (level1.start.cy - level1.goal.cy) * 2,
+    );
+    expect(
+      evaluateLifecycle(
+        shipAt(195, level2.worldHeight + 20),
+        level2.goal,
+        1,
+        level2.timeLimit,
+        level2.worldHeight,
+      ),
+    ).toEqual({ kind: "failed", reason: "out-of-bounds" });
   });
 });
 
