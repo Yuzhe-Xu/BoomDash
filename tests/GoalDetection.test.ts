@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { level1 } from "../src/level/level1";
-import { evaluateLifecycle, isInsideGoal, pointInLowerEllipse } from "../src/simulation/LifecycleBounds";
+import {
+  distanceToGoal,
+  evaluateLifecycle,
+  isInsideGoal,
+  minSpeedToFinish,
+  pointInLowerEllipse,
+} from "../src/simulation/LifecycleBounds";
 import type { Ship } from "../src/simulation/GameState";
 import { vec2 } from "../src/simulation/Vec2";
 
@@ -52,5 +58,26 @@ describe("GoalDetection", () => {
       kind: "failed",
       reason: "timeout",
     });
+  });
+});
+
+describe("minSpeedToFinish", () => {
+  it("is remaining distance over remaining time", () => {
+    const ship = shipAt(level1.goal.cx, 400);
+    const dist = distanceToGoal(ship.position, level1.goal, ship.radius);
+    expect(minSpeedToFinish(ship.position, level1.goal, ship.radius, 5, 15)).toBeCloseTo(dist / 10);
+  });
+
+  it("is zero once the ship can reach the goal zone", () => {
+    const ship = shipAt(195, 50);
+    expect(distanceToGoal(ship.position, level1.goal, ship.radius)).toBe(0);
+    expect(minSpeedToFinish(ship.position, level1.goal, ship.radius, 1, 15)).toBe(0);
+  });
+
+  it("is infinite after the time limit if still away from the goal", () => {
+    const ship = shipAt(195, 400);
+    expect(minSpeedToFinish(ship.position, level1.goal, ship.radius, 15, 15)).toBe(
+      Number.POSITIVE_INFINITY,
+    );
   });
 });

@@ -64,8 +64,7 @@ export class CanvasRenderer {
 
     ctx.clearRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
     this.drawBackdrop();
-    this.drawZone(level.start, "#3df0ff", "upper");
-    this.drawZone(level.goal, state.phase === "success" ? "#9dffc4" : "#5dff9a", "lower", state.phase === "success");
+    this.drawZone(level.goal, state.phase === "success" ? "#9dffc4" : "#5dff9a", state.phase === "success");
     this.effects.pushTrail(shipPos.x, shipPos.y, state.phase === "flying" || state.phase === "success");
     this.effects.draw(ctx, state.effects, dt);
 
@@ -99,35 +98,19 @@ export class CanvasRenderer {
     }
   }
 
-  private drawZone(
-    zone: LevelDefinition["start"],
-    color: string,
-    arc: "upper" | "lower",
-    bright = false,
-  ): void {
+  private drawZone(zone: LevelDefinition["goal"], color: string, bright = false): void {
     const { ctx } = this;
     ctx.save();
     ctx.beginPath();
-    if (arc === "upper") {
-      ctx.ellipse(zone.cx, zone.cy, zone.rx, zone.ry, 0, Math.PI, 0, true);
-      ctx.lineTo(zone.cx + zone.rx, LOGICAL_HEIGHT);
-      ctx.lineTo(zone.cx - zone.rx, LOGICAL_HEIGHT);
-      ctx.closePath();
-    } else {
-      ctx.ellipse(zone.cx, zone.cy, zone.rx, zone.ry, 0, 0, Math.PI, false);
-      ctx.lineTo(zone.cx - zone.rx, 0);
-      ctx.lineTo(zone.cx + zone.rx, 0);
-      ctx.closePath();
-    }
+    ctx.ellipse(zone.cx, zone.cy, zone.rx, zone.ry, 0, 0, Math.PI, false);
+    ctx.lineTo(zone.cx - zone.rx, 0);
+    ctx.lineTo(zone.cx + zone.rx, 0);
+    ctx.closePath();
     ctx.fillStyle = bright ? "rgba(93, 255, 154, 0.22)" : hexAlpha(color, 0.1);
     ctx.fill();
 
     ctx.beginPath();
-    if (arc === "upper") {
-      ctx.ellipse(zone.cx, zone.cy, zone.rx, zone.ry, 0, Math.PI, 0, true);
-    } else {
-      ctx.ellipse(zone.cx, zone.cy, zone.rx, zone.ry, 0, 0, Math.PI, false);
-    }
+    ctx.ellipse(zone.cx, zone.cy, zone.rx, zone.ry, 0, 0, Math.PI, false);
     ctx.strokeStyle = color;
     ctx.lineWidth = 4;
     ctx.shadowColor = color;

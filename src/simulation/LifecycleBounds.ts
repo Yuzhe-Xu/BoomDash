@@ -2,6 +2,7 @@ import type { ZoneDefinition } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import type { FailReason } from "../app/GamePhase";
 import type { Ship } from "./GameState";
+import type { Vec2 } from "./Vec2";
 
 export type LifecycleResult =
   | { kind: "alive" }
@@ -71,6 +72,29 @@ export function flightProgress(shipY: number, startY: number, goalY: number): nu
     return 0;
   }
   return clamp01((startY - shipY) / span);
+}
+
+export function distanceToGoal(position: Vec2, goal: ZoneDefinition, shipRadius: number): number {
+  const dist = Math.hypot(position.x - goal.cx, position.y - goal.cy);
+  return Math.max(0, dist - goal.ry - shipRadius);
+}
+
+export function minSpeedToFinish(
+  position: Vec2,
+  goal: ZoneDefinition,
+  shipRadius: number,
+  elapsed: number,
+  timeLimit: number,
+): number {
+  const dist = distanceToGoal(position, goal, shipRadius);
+  if (dist <= 0) {
+    return 0;
+  }
+  const remainingTime = timeLimit - elapsed;
+  if (remainingTime <= 0) {
+    return Number.POSITIVE_INFINITY;
+  }
+  return dist / remainingTime;
 }
 
 function clamp01(value: number): number {

@@ -23,17 +23,23 @@
           <canvas id="game" aria-label="BoomDash game canvas"></canvas>
 
           <header id="hud-top">
-            <div class="hud-cluster">
-              <span id="level-tag">SECTOR 01</span>
-              <span id="hud-stat">BOMBS 0/5</span>
+            <div class="hud-row">
+              <div class="hud-cluster">
+                <span id="level-tag">SECTOR 01</span>
+                <span id="hud-stat">BOMBS 0/5</span>
+              </div>
+              <div class="hud-cluster right">
+                <button id="btn-mute" class="icon-btn" type="button" aria-label="mute">
+                  SND
+                </button>
+                <button id="btn-pause" class="icon-btn" type="button" aria-label="pause">
+                  II
+                </button>
+              </div>
             </div>
-            <div class="hud-cluster right">
-              <button id="btn-mute" class="icon-btn" type="button" aria-label="mute">
-                SND
-              </button>
-              <button id="btn-pause" class="icon-btn" type="button" aria-label="pause">
-                II
-              </button>
+            <div id="hud-ship" hidden>
+              <span id="hud-speed">V 0</span>
+              <span id="hud-min">MIN 0</span>
             </div>
           </header>
 
