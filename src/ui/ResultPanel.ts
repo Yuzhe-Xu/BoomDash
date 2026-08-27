@@ -9,7 +9,16 @@ const FAIL_COPY: Record<FailReason, string> = {
   timeout: "超过时间",
 };
 
+export type ResultView = {
+  score: number;
+  stars: StarCount;
+  bestScore: number | null;
+  canAdvance: boolean;
+};
+
 export class ResultPanel {
+  private shownKey = "";
+
   constructor(
     private readonly root: HTMLElement,
     private readonly kicker: HTMLElement,
@@ -39,18 +48,36 @@ export class ResultPanel {
     this.menuButton.addEventListener("click", handlers.menu);
   }
 
-  render(state: RunState, bestTime: number | null, canAdvance = false, stars: StarCount = 0): void {
+  render(
+    state: RunState,
+    result: ResultView = { score: 0, stars: 0, bestScore: null, canAdvance: false },
+  ): void {
     const paused = state.phase === "paused";
     const ended = state.phase === "success" || state.phase === "failed";
+    const success = state.phase === "success";
     this.pauseRoot.hidden = !paused;
     this.root.hidden = !ended;
-    this.nextButton.hidden = !(ended && state.phase === "success" && canAdvance);
+    this.nextButton.hidden = !(ended && success && result.canAdvance);
     if (!ended) {
+      this.shownKey = "";
       this.stars.hidden = true;
       return;
     }
 
-    const success = state.phase === "success";
+    const key = [
+      state.phase,
+      state.elapsed.toFixed(2),
+      state.usedBombs,
+      result.score,
+      result.stars,
+      result.bestScore ?? "",
+      result.canAdvance,
+    ].join(":");
+    if (key === this.shownKey) {
+      return;
+    }
+    this.shownKey = key;
+
     this.root.classList.toggle("success", success);
     this.root.classList.toggle("fail", !success);
     this.kicker.textContent = success ? "LINK STABLE" : "SIGNAL LOST";
@@ -60,19 +87,26 @@ export class ResultPanel {
       : FAIL_COPY[state.failReason ?? "out-of-bounds"];
     this.stars.hidden = !success;
     if (success) {
-      fillStarRow(this.stars, stars);
+      fillStarRow(this.stars, result.stars);
     }
-    const rows = [
-      ["TIME", `${state.elapsed.toFixed(2)}s`],
-      ["BOMBS", String(state.usedBombs)],
-    ];
-    if (success && bestTime !== null) {
-      rows.push(["BEST", `${bestTime.toFixed(2)}s`]);
+    const rows: Array<[string, string, string?]> = [];
+    if (success) {
+      rows.push(["SCORE", String(result.score), "stat-score"]);
     }
-    this.stats.innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+    rows.push(["TIME", `${state.elapsed.toFixed(2)}s`], ["BOMBS", String(state.usedBombs)]);
+    if (success && result.bestScore !== null) {
+      rows.push(["BEST", String(result.bestScore)]);
+    }
+    this.stats.innerHTML = rows
+      .map(
+        ([k, v, cls]) =>
+          `<div${cls ? ` class="${cls}"` : ""}><dt>${k}</dt><dd>${v}</dd></div>`,
+      )
+      .join("");
   }
 
   hide(): void {
+    this.shownKey = "";
     this.pauseRoot.hidden = true;
     this.root.hidden = true;
     this.nextButton.hidden = true;

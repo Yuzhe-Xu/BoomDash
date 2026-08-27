@@ -1,9 +1,9 @@
-import { cornerQuadraticGoal } from "./GoalGeometry";
+import { topClosedQuadraticGoal } from "./GoalGeometry";
 import { LOGICAL_HEIGHT, type LevelDefinition } from "./LevelDefinition";
 
-export const level3: LevelDefinition = {
-  id: "level-3",
-  name: "SECTOR 03",
+export const level4: LevelDefinition = {
+  id: "level-4",
+  name: "SECTOR 04",
   worldHeight: LOGICAL_HEIGHT,
   start: {
     cx: 195,
@@ -12,18 +12,15 @@ export const level3: LevelDefinition = {
     ry: 58,
     arc: "upper",
   },
-  goals: [
-    cornerQuadraticGoal("goal-left", "top-left", 78, 78, 64),
-    cornerQuadraticGoal("goal-right", "top-right", 78, 78, 64),
-  ],
+  goals: [topClosedQuadraticGoal("goal-top-left", 40, 123, 31)],
   maxBombs: 5,
   unlimitedBombs: false,
   blastRadius: 110,
   maxImpulse: 150,
   launchVelocity: -55,
   timeLimit: 15,
-  star3Score: 6000,
-  star2Score: 4400,
+  star3Score: 5800,
+  star2Score: 4200,
   shipRadius: 14,
   speedCap: 900,
 };

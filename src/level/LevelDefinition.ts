@@ -42,8 +42,8 @@ export type LevelDefinition = {
   maxImpulse: number;
   launchVelocity: number;
   timeLimit: number;
-  star3Time: number;
-  star2Time: number;
+  star3Score: number;
+  star2Score: number;
   shipRadius: number;
   speedCap: number;
 };

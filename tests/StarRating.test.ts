@@ -2,49 +2,82 @@ import { describe, expect, it } from "vitest";
 import { levels } from "../src/level/LevelCatalog";
 import { level1 } from "../src/level/level1";
 import { level2 } from "../src/level/level2";
-import { starsForBestTime, starsForTime } from "../src/level/StarRating";
+import { level4 } from "../src/level/level4";
+import {
+  BOMB_WEIGHT,
+  runScore,
+  SCORE_SCALE,
+  starsForBestScore,
+  starsForScore,
+  TIME_WEIGHT,
+} from "../src/level/StarRating";
 
-describe("starsForTime", () => {
-  it("awards three stars at or below the fast threshold", () => {
-    expect(starsForTime(0, level1)).toBe(3);
-    expect(starsForTime(level1.star3Time, level1)).toBe(3);
+describe("runScore", () => {
+  it("rewards faster finishes and fewer detonations", () => {
+    const fastFew = runScore(6, 1, level1);
+    const slowFew = runScore(12, 1, level1);
+    const fastMany = runScore(6, 4, level1);
+    expect(fastFew).toBeGreaterThan(slowFew);
+    expect(fastFew).toBeGreaterThan(fastMany);
   });
 
-  it("awards two stars between the fast and mid thresholds", () => {
-    expect(starsForTime(level1.star3Time + 0.01, level1)).toBe(2);
-    expect(starsForTime(level1.star2Time, level1)).toBe(2);
-  });
-
-  it("awards one star for any slower successful finish", () => {
-    expect(starsForTime(level1.star2Time + 0.01, level1)).toBe(1);
-    expect(starsForTime(level1.timeLimit, level1)).toBe(1);
-  });
-
-  it("uses sector two thresholds independently", () => {
-    expect(starsForTime(level2.star3Time, level2)).toBe(3);
-    expect(starsForTime(level2.star3Time + 0.01, level2)).toBe(2);
-    expect(starsForTime(level2.star2Time, level2)).toBe(2);
-    expect(starsForTime(level2.star2Time + 0.01, level2)).toBe(1);
+  it("uses a 60/40 time-bomb mix on a 10000 scale", () => {
+    expect(TIME_WEIGHT + BOMB_WEIGHT).toBe(1);
+    expect(runScore(0, 0, level1)).toBe(SCORE_SCALE);
+    expect(runScore(level1.timeLimit, level1.maxBombs, level1)).toBe(0);
+    expect(runScore(7, 1, level1)).toBe(6400);
   });
 });
 
-describe("starsForBestTime", () => {
-  it("is empty until a successful run is stored", () => {
-    expect(starsForBestTime(null, level1)).toBe(0);
+describe("starsForScore", () => {
+  it("awards three stars at or above the high threshold", () => {
+    expect(starsForScore(level1.star3Score, level1)).toBe(3);
+    expect(starsForScore(SCORE_SCALE, level1)).toBe(3);
   });
 
-  it("derives stars from the stored best time", () => {
-    expect(starsForBestTime(level1.star3Time, level1)).toBe(3);
-    expect(starsForBestTime(level1.star2Time, level1)).toBe(2);
-    expect(starsForBestTime(level1.timeLimit, level1)).toBe(1);
+  it("awards two stars between the high and mid thresholds", () => {
+    expect(starsForScore(level1.star3Score - 1, level1)).toBe(2);
+    expect(starsForScore(level1.star2Score, level1)).toBe(2);
+  });
+
+  it("awards one star for any successful finish below the mid threshold", () => {
+    expect(starsForScore(level1.star2Score - 1, level1)).toBe(1);
+    expect(starsForScore(0, level1)).toBe(1);
+  });
+
+  it("uses sector two thresholds independently", () => {
+    expect(starsForScore(level2.star3Score, level2)).toBe(3);
+    expect(starsForScore(level2.star3Score - 1, level2)).toBe(2);
+    expect(starsForScore(level2.star2Score, level2)).toBe(2);
+    expect(starsForScore(level2.star2Score - 1, level2)).toBe(1);
+  });
+
+  it("lets extra bombs drop a fast sector-four finish from three stars to two", () => {
+    const lean = runScore(8, 1, level4);
+    const wasteful = runScore(8, 3, level4);
+    expect(starsForScore(lean, level4)).toBe(3);
+    expect(starsForScore(wasteful, level4)).toBe(2);
+  });
+});
+
+describe("starsForBestScore", () => {
+  it("is empty until a successful run is stored", () => {
+    expect(starsForBestScore(null, level1)).toBe(0);
+  });
+
+  it("derives stars from the stored best score", () => {
+    expect(starsForBestScore(level1.star3Score, level1)).toBe(3);
+    expect(starsForBestScore(level1.star2Score, level1)).toBe(2);
+    expect(starsForBestScore(0, level1)).toBe(1);
   });
 });
 
 describe("level star thresholds", () => {
-  it("keeps 3-star faster than 2-star and both inside the time limit", () => {
+  it("keeps 3-star above 2-star and both inside the score scale", () => {
     for (const level of levels) {
-      expect(level.star3Time).toBeLessThan(level.star2Time);
-      expect(level.star2Time).toBeLessThan(level.timeLimit);
+      expect(level.star3Score).toBeGreaterThan(level.star2Score);
+      expect(level.star2Score).toBeGreaterThan(0);
+      expect(level.star3Score).toBeLessThanOrEqual(SCORE_SCALE);
     }
   });
 });

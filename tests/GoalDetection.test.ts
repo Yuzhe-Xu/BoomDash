@@ -3,6 +3,7 @@ import { pointInGoalRegion, referenceGoalY } from "../src/level/GoalGeometry";
 import { level1 } from "../src/level/level1";
 import { level2 } from "../src/level/level2";
 import { level3 } from "../src/level/level3";
+import { level4 } from "../src/level/level4";
 import {
   distanceToGoal,
   evaluateLifecycle,
@@ -115,6 +116,20 @@ describe("multi-goal sectors", () => {
       kind: "success",
     });
     expect(evaluateLifecycle(shipAt(195, -20), level3.goals, 1, level3.timeLimit)).toEqual({
+      kind: "failed",
+      reason: "overshoot",
+    });
+  });
+});
+
+describe("sector four goal", () => {
+  it("accepts the small left pocket and rejects the center top", () => {
+    expect(isInsideAnyGoal(shipAt(82, 18), level4.goals)).toBe(true);
+    expect(isInsideAnyGoal(shipAt(195, 20), level4.goals)).toBe(false);
+    expect(evaluateLifecycle(shipAt(82, 18), level4.goals, 1, level4.timeLimit)).toEqual({
+      kind: "success",
+    });
+    expect(evaluateLifecycle(shipAt(195, -20), level4.goals, 1, level4.timeLimit)).toEqual({
       kind: "failed",
       reason: "overshoot",
     });

@@ -19,8 +19,8 @@ export const level1: LevelDefinition = {
   maxImpulse: 150,
   launchVelocity: -55,
   timeLimit: 15,
-  star3Time: 7,
-  star2Time: 11,
+  star3Score: 6400,
+  star2Score: 4800,
   shipRadius: 14,
   speedCap: 900,
 };

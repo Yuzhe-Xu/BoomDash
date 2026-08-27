@@ -6,11 +6,11 @@ import type { LevelDefinition } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import { findLevel, levels, nextLevel } from "../level/LevelCatalog";
 import { level1, withDebugOverrides } from "../level/level1";
-import { starsForTime } from "../level/StarRating";
+import { runScore, starsForScore } from "../level/StarRating";
 import { CanvasRenderer } from "../rendering/CanvasRenderer";
 import { GameSimulation } from "../simulation/GameSimulation";
 import { FIXED_DT } from "../simulation/ShipSimulator";
-import { loadProgress, recordBestTime, saveMuted } from "../storage/ProgressStore";
+import { loadProgress, recordSuccess, saveMuted } from "../storage/ProgressStore";
 import { DebugOverlay } from "../ui/DebugOverlay";
 import { FlightControls } from "../ui/FlightControls";
 import { Hud } from "../ui/Hud";
@@ -40,7 +40,7 @@ export class GameApp {
   private fps = 60;
   private frames = 0;
   private fpsStamp = performance.now();
-  private bestTime: number | null;
+  private bestScore: number | null;
   private lastPhase = this.sim.state.phase;
   private seenFx = new Set<string>();
   private readonly stage: HTMLElement;
@@ -104,7 +104,7 @@ export class GameApp {
     this.camera.reset(this.level.worldHeight);
     this.startScreen.render(levels);
     const progress = loadProgress(this.level.id);
-    this.bestTime = progress.bestTime;
+    this.bestScore = progress.bestScore;
     this.audio.setMuted(progress.muted);
     this.bind(canvas);
     this.layoutStage();
@@ -341,7 +341,7 @@ export class GameApp {
     this.audio.unlock();
     this.level = withDebugOverrides(definition, this.debug);
     this.sim = new GameSimulation(this.level);
-    this.bestTime = loadProgress(this.level.id).bestTime;
+    this.bestScore = loadProgress(this.level.id).bestScore;
     this.lastPhase = this.sim.state.phase;
     this.seenFx.clear();
     this.renderer.resetVisuals();
@@ -419,7 +419,8 @@ export class GameApp {
       this.audio.launch();
     }
     if (phase === "success") {
-      this.bestTime = recordBestTime(this.level.id, this.sim.state.elapsed);
+      const score = runScore(this.sim.state.elapsed, this.sim.state.usedBombs, this.level);
+      this.bestScore = recordSuccess(this.level.id, this.sim.state.elapsed, score).bestScore;
       this.audio.success();
     }
     if (phase === "failed") {
@@ -444,12 +445,14 @@ export class GameApp {
     this.planning.setDeleteEnabled(Boolean(state.selectedId) && planning);
     this.flight.render(state.bombs, (planning || flying) && state.bombs.length > 0, state.selectedId, planning);
     this.hud.render(state, this.level, this.audio.muted);
-    this.result.render(
-      state,
-      this.bestTime,
-      Boolean(nextLevel(this.level.id)),
-      state.phase === "success" ? starsForTime(state.elapsed, this.level) : 0,
-    );
+    const success = state.phase === "success";
+    const score = success ? runScore(state.elapsed, state.usedBombs, this.level) : 0;
+    this.result.render(state, {
+      score,
+      stars: success ? starsForScore(score, this.level) : 0,
+      bestScore: this.bestScore,
+      canAdvance: Boolean(nextLevel(this.level.id)),
+    });
   }
 }
 
