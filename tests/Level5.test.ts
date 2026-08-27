@@ -4,6 +4,7 @@ import { LOGICAL_WIDTH } from "../src/level/LevelDefinition";
 import { level1 } from "../src/level/level1";
 import { level4 } from "../src/level/level4";
 import { level5 } from "../src/level/level5";
+import { level6 } from "../src/level/level6";
 import { GameSimulation } from "../src/simulation/GameSimulation";
 import { isInsideAnyGoal } from "../src/simulation/LifecycleBounds";
 import { FIXED_DT } from "../src/simulation/ShipSimulator";
@@ -18,10 +19,13 @@ describe("level 5 catalog", () => {
       "level-3",
       "level-4",
       "level-5",
+      "level-6",
+      "level-7",
+      "level-8",
     ]);
     expect(findLevel("level-5")).toBe(level5);
     expect(nextLevel(level4.id)).toBe(level5);
-    expect(nextLevel(level5.id)).toBeUndefined();
+    expect(nextLevel(level5.id)).toBe(level6);
   });
 
   it("uses a slightly taller map with a centered self-closed circle", () => {

@@ -1,5 +1,5 @@
 import { circleHitsGoalRegion, distanceToPolygon, goalPolygon } from "../level/GoalGeometry";
-import type { GoalRegion } from "../level/LevelDefinition";
+import type { GoalRegion, HazardRegion } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import type { FailReason } from "../app/GamePhase";
 import type { Ship } from "./GameState";
@@ -33,15 +33,37 @@ export function isInsideAnyGoal(
   return goals.some((region) => isInsideGoal(ship, region, worldHeight));
 }
 
+export function isInsideAnyHazard(
+  ship: Ship,
+  hazards: HazardRegion[],
+  worldHeight = LOGICAL_HEIGHT,
+): boolean {
+  return hazards.some((region) =>
+    circleHitsGoalRegion(
+      ship.position.x,
+      ship.position.y,
+      ship.radius,
+      region,
+      LOGICAL_WIDTH,
+      worldHeight,
+    ),
+  );
+}
+
 export function evaluateLifecycle(
   ship: Ship,
   goals: GoalRegion[],
   elapsed: number,
   timeLimit: number,
   worldHeight = LOGICAL_HEIGHT,
+  hazards: HazardRegion[] = [],
 ): LifecycleResult {
   if (isInsideAnyGoal(ship, goals, worldHeight)) {
     return { kind: "success" };
+  }
+
+  if (isInsideAnyHazard(ship, hazards, worldHeight)) {
+    return { kind: "failed", reason: "asteroid" };
   }
 
   if (elapsed >= timeLimit) {

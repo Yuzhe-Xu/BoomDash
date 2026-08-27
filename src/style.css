@@ -1043,6 +1043,79 @@ button.active,
   animation: tut-score-mark-c 5.2s linear infinite;
 }
 
+.tut-asteroid-belt {
+  position: absolute;
+  left: 34px;
+  top: 68px;
+  width: 216px;
+  height: 82px;
+  border: 2px solid #ff4d6d;
+  border-radius: 48% 52% 45% 55% / 42% 48% 52% 58%;
+  background: rgba(255, 77, 109, 0.08);
+  box-shadow: 0 0 12px rgba(255, 77, 109, 0.35);
+  overflow: hidden;
+  animation: tut-asteroid-pulse 4.6s linear infinite;
+}
+
+.tut-asteroid-field {
+  position: absolute;
+  inset: 9px 14px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  align-items: center;
+  justify-items: center;
+  color: rgba(255, 176, 32, 0.78);
+  font-size: 14px;
+}
+
+.tut-asteroid-field i {
+  font-style: normal;
+  animation: tut-asteroid-star 1.6s step-end infinite;
+}
+
+.tut-asteroid-field i:nth-child(3n) {
+  animation-delay: 0.45s;
+}
+
+.tut-asteroid-field i:nth-child(4n) {
+  animation-delay: 0.85s;
+}
+
+.anim-asteroid .tut-craft {
+  animation: tut-asteroid-ship 4.6s linear infinite;
+}
+
+.tut-impact {
+  position: absolute;
+  left: 50%;
+  top: 133px;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border: 2px solid #ff4d6d;
+  box-shadow: 0 0 16px rgba(255, 77, 109, 0.8);
+  opacity: 0;
+  z-index: 5;
+  animation: tut-asteroid-impact 4.6s linear infinite;
+}
+
+.tut-hazard-alert {
+  position: absolute;
+  left: 50%;
+  top: 43px;
+  z-index: 6;
+  padding: 4px 8px;
+  border: 1px solid #ff4d6d;
+  background: rgba(20, 6, 12, 0.9);
+  color: #ff4d6d;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-50%);
+  animation: tut-asteroid-alert 4.6s linear infinite;
+}
+
 .tutorial-dots {
   display: flex;
   justify-content: center;
@@ -1585,5 +1658,90 @@ button.active,
     background: transparent;
     box-shadow: none;
     transform: rotate(45deg) scale(0.7);
+  }
+}
+
+@keyframes tut-asteroid-ship {
+  0%,
+  10% {
+    left: 50%;
+    top: 178px;
+    opacity: 1;
+    filter: none;
+  }
+  52% {
+    left: 50%;
+    top: 112px;
+    opacity: 1;
+    filter: none;
+  }
+  58%,
+  76% {
+    left: 50%;
+    top: 110px;
+    opacity: 0.22;
+    filter: drop-shadow(0 0 8px #ff4d6d);
+  }
+  88%,
+  100% {
+    left: 50%;
+    top: 110px;
+    opacity: 0;
+    filter: none;
+  }
+}
+
+@keyframes tut-asteroid-impact {
+  0%,
+  48% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  56% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  72%,
+  100% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
+@keyframes tut-asteroid-alert {
+  0%,
+  56% {
+    opacity: 0;
+  }
+  64%,
+  86% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes tut-asteroid-pulse {
+  0%,
+  46%,
+  100% {
+    background: rgba(255, 77, 109, 0.08);
+    box-shadow: 0 0 12px rgba(255, 77, 109, 0.35);
+  }
+  54%,
+  70% {
+    background: rgba(255, 77, 109, 0.2);
+    box-shadow: 0 0 22px rgba(255, 77, 109, 0.75);
+  }
+}
+
+@keyframes tut-asteroid-star {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.35;
   }
 }

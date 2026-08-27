@@ -13,6 +13,7 @@ export const level1: LevelDefinition = {
     arc: "upper",
   },
   goals: [topClosedQuadraticGoal("goal-top", 70, 320, 92)],
+  hazards: [],
   maxBombs: 5,
   unlimitedBombs: false,
   blastRadius: 110,

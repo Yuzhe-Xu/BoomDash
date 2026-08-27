@@ -64,6 +64,23 @@ test("shows a one-page rating tutorial before sector four", async ({ page }) => 
   await expect(page.locator("#level-tag")).toHaveText("SECTOR 04");
 });
 
+test("shows a one-page asteroid tutorial before sector six", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "SECTORS" }).click();
+  await page.getByRole("button", { name: /SECTOR 06/ }).click();
+
+  await expect(page.locator("#tutorial")).toBeVisible();
+  await expect(page.locator("#tutorial-title")).toHaveText("陨石带");
+  await expect(page.locator(".anim-asteroid")).toBeVisible();
+  await expect(page.locator("#tutorial-copy")).toContainText("禁入区域");
+  await expect(page.locator("#tutorial-copy")).toContainText("任务立即失败");
+  await expect(page.getByRole("button", { name: "BEGIN" })).toBeVisible();
+
+  await page.getByRole("button", { name: "BEGIN" }).click();
+  await expect(page.locator("#tutorial")).toBeHidden();
+  await expect(page.locator("#level-tag")).toHaveText("SECTOR 06");
+});
+
 test("loads the first sector and can place a bomb then launch", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#start-screen")).toBeVisible();
@@ -103,6 +120,9 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
   await expect(page.getByRole("button", { name: /SECTOR 03/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 04/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 05/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 06/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 07/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 08/ })).toBeEnabled();
 
   await page.getByRole("button", { name: /SECTOR 02/ }).click();
   await expect(page.locator("#tutorial")).toBeVisible();

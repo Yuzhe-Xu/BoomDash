@@ -87,6 +87,7 @@ export class GameSimulation {
       this.state.elapsed,
       this.level.timeLimit,
       this.level.worldHeight,
+      this.level.hazards,
     );
 
     if (result.kind === "success") {

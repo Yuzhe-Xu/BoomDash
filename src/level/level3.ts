@@ -16,6 +16,7 @@ export const level3: LevelDefinition = {
     cornerQuadraticGoal("goal-left", "top-left", 78, 78, 64),
     cornerQuadraticGoal("goal-right", "top-right", 78, 78, 64),
   ],
+  hazards: [],
   maxBombs: 5,
   unlimitedBombs: false,
   blastRadius: 110,

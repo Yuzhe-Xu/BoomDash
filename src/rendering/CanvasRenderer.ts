@@ -1,5 +1,10 @@
-import { traceGoalCurve, traceGoalRegion } from "../level/GoalGeometry";
-import type { GoalRegion, LevelDefinition } from "../level/LevelDefinition";
+import {
+  goalPolygon,
+  pointInPolygon,
+  traceGoalCurve,
+  traceGoalRegion,
+} from "../level/GoalGeometry";
+import type { GoalRegion, HazardRegion, LevelDefinition } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import type { Bomb, RunState } from "../simulation/GameState";
 import { lerp } from "../simulation/Vec2";
@@ -78,6 +83,9 @@ export class CanvasRenderer {
     const goalBright = state.phase === "success";
     for (const region of level.goals) {
       this.drawGoalRegion(region, goalColor, goalBright, level.worldHeight);
+    }
+    for (const region of level.hazards) {
+      this.drawHazardRegion(region, level.worldHeight);
     }
     this.effects.pushTrail(shipPos.x, shipPos.y, state.phase === "flying" || state.phase === "success");
     this.effects.draw(ctx, state.effects, dt);
@@ -189,6 +197,48 @@ export class CanvasRenderer {
     ctx.restore();
   }
 
+  private drawHazardRegion(region: HazardRegion, worldHeight: number): void {
+    const { ctx } = this;
+    const polygon = goalPolygon(region, LOGICAL_WIDTH, worldHeight);
+    const minX = Math.min(...polygon.map((point) => point.x));
+    const maxX = Math.max(...polygon.map((point) => point.x));
+    const minY = Math.min(...polygon.map((point) => point.y));
+    const maxY = Math.max(...polygon.map((point) => point.y));
+
+    ctx.save();
+    ctx.beginPath();
+    traceGoalRegion(ctx, region, LOGICAL_WIDTH, worldHeight);
+    ctx.fillStyle = "rgba(255, 77, 109, 0.08)";
+    ctx.fill();
+    ctx.clip();
+    ctx.fillStyle = "rgba(255, 176, 32, 0.72)";
+    ctx.font = "14px 'Share Tech Mono', monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    let row = 0;
+    for (let y = minY + 14; y < maxY; y += 24) {
+      const offset = (row * 13) % 26;
+      for (let x = minX + 13 + offset; x < maxX; x += 32) {
+        if (pointInPolygon(x, y, polygon)) {
+          ctx.fillText("*", x, y);
+        }
+      }
+      row += 1;
+    }
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    traceGoalCurve(ctx, region);
+    ctx.closePath();
+    ctx.strokeStyle = "#ff4d6d";
+    ctx.lineWidth = 2;
+    ctx.shadowColor = "#ff4d6d";
+    ctx.shadowBlur = 10;
+    ctx.stroke();
+    ctx.restore();
+  }
+
   private drawShip(x: number, y: number, vx: number, vy: number, phase: RunState["phase"]): void {
     const { ctx } = this;
     const flying = phase === "flying" || phase === "success";
@@ -227,6 +277,12 @@ export class CanvasRenderer {
     ctx.save();
     ctx.fillStyle = "rgba(255, 176, 32, 0.14)";
     for (const region of level.goals) {
+      ctx.beginPath();
+      traceGoalRegion(ctx, region, LOGICAL_WIDTH, level.worldHeight);
+      ctx.fill();
+    }
+    ctx.fillStyle = "rgba(255, 77, 109, 0.2)";
+    for (const region of level.hazards) {
       ctx.beginPath();
       traceGoalRegion(ctx, region, LOGICAL_WIDTH, level.worldHeight);
       ctx.fill();

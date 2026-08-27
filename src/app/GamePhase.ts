@@ -1,6 +1,6 @@
 export type GamePhase = "planning" | "flying" | "paused" | "success" | "failed";
 
-export type FailReason = "out-of-bounds" | "overshoot" | "timeout";
+export type FailReason = "out-of-bounds" | "overshoot" | "timeout" | "asteroid";
 
 export type BombState = "armed" | "detonated";
 

@@ -3,10 +3,15 @@ import { level1 } from "../src/level/level1";
 import { level2 } from "../src/level/level2";
 import { level3 } from "../src/level/level3";
 import { level4 } from "../src/level/level4";
+import { level5 } from "../src/level/level5";
+import { level6 } from "../src/level/level6";
+import { level7 } from "../src/level/level7";
+import { level8 } from "../src/level/level8";
 import {
   LEVEL1_TUTORIAL_PAGES,
   LEVEL2_TUTORIAL_PAGES,
   LEVEL4_TUTORIAL_PAGES,
+  LEVEL6_TUTORIAL_PAGES,
   clampTutorialPage,
   isFirstTutorialPage,
   isLastTutorialPage,
@@ -38,11 +43,23 @@ describe("tutorialPages", () => {
     expect(tutorialPagesFor(level4.id)).toEqual(LEVEL4_TUTORIAL_PAGES);
   });
 
+  it("defines one asteroid hazard page for sector six", () => {
+    expect(LEVEL6_TUTORIAL_PAGES).toHaveLength(1);
+    expect(LEVEL6_TUTORIAL_PAGES[0]?.id).toBe("asteroid");
+    expect(LEVEL6_TUTORIAL_PAGES[0]?.copy).toContain("禁入区域");
+    expect(LEVEL6_TUTORIAL_PAGES[0]?.copy).toContain("任务立即失败");
+    expect(tutorialPagesFor(level6.id)).toEqual(LEVEL6_TUTORIAL_PAGES);
+  });
+
   it("appears before sectors that have briefing pages", () => {
     expect(shouldShowTutorial(level1.id)).toBe(true);
     expect(shouldShowTutorial(level2.id)).toBe(true);
     expect(shouldShowTutorial(level3.id)).toBe(false);
     expect(shouldShowTutorial(level4.id)).toBe(true);
+    expect(shouldShowTutorial(level5.id)).toBe(false);
+    expect(shouldShowTutorial(level6.id)).toBe(true);
+    expect(shouldShowTutorial(level7.id)).toBe(false);
+    expect(shouldShowTutorial(level8.id)).toBe(false);
     expect(shouldShowTutorial("missing")).toBe(false);
   });
 

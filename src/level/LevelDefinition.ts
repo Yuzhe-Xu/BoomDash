@@ -23,12 +23,15 @@ export type CurveCommand =
 
 export type MapEdge = "top" | "right" | "bottom" | "left";
 
-export type GoalRegion = {
+export type CurveRegion = {
   id: string;
   start: Point;
   curve: CurveCommand[];
   closeEdges: MapEdge[];
 };
+
+export type GoalRegion = CurveRegion;
+export type HazardRegion = CurveRegion;
 
 export type LevelDefinition = {
   id: string;
@@ -36,6 +39,7 @@ export type LevelDefinition = {
   worldHeight: number;
   start: ZoneDefinition;
   goals: GoalRegion[];
+  hazards: HazardRegion[];
   maxBombs: number;
   unlimitedBombs: boolean;
   blastRadius: number;

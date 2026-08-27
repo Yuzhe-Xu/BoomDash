@@ -1,9 +1,10 @@
 import { level1 } from "../level/level1";
 import { level2 } from "../level/level2";
 import { level4 } from "../level/level4";
+import { level6 } from "../level/level6";
 
 export type TutorialPage = {
-  id: "goal" | "deploy" | "flight" | "scroll" | "score";
+  id: "goal" | "deploy" | "flight" | "scroll" | "score" | "asteroid";
   kicker: string;
   title: string;
   copy: string;
@@ -48,10 +49,20 @@ export const LEVEL4_TUTORIAL_PAGES: TutorialPage[] = [
   },
 ];
 
+export const LEVEL6_TUTORIAL_PAGES: TutorialPage[] = [
+  {
+    id: "asteroid",
+    kicker: "HAZARD",
+    title: "陨石带",
+    copy: "陨石带是禁入区域。飞船一旦进入，任务立即失败；规划轨迹从区域外绕行。",
+  },
+];
+
 const TUTORIALS_BY_LEVEL: Record<string, TutorialPage[]> = {
   [level1.id]: LEVEL1_TUTORIAL_PAGES,
   [level2.id]: LEVEL2_TUTORIAL_PAGES,
   [level4.id]: LEVEL4_TUTORIAL_PAGES,
+  [level6.id]: LEVEL6_TUTORIAL_PAGES,
 };
 
 export function tutorialPagesFor(levelId: string): TutorialPage[] {

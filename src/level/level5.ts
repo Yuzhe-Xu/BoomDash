@@ -23,6 +23,7 @@ export const level5: LevelDefinition = {
       GOAL_RADIUS,
     ),
   ],
+  hazards: [],
   maxBombs: 5,
   unlimitedBombs: false,
   blastRadius: 110,

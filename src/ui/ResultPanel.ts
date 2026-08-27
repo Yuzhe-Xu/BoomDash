@@ -7,6 +7,7 @@ const FAIL_COPY: Record<FailReason, string> = {
   "out-of-bounds": "飞船离开画面",
   overshoot: "越过顶部但未进入终点",
   timeout: "超过时间",
+  asteroid: "飞船进入陨石带",
 };
 
 export type ResultView = {

@@ -107,6 +107,48 @@ export function closedCubicCircleGoal(
   };
 }
 
+export function closedCubicBlob(
+  id: string,
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number,
+): GoalRegion {
+  const kx = rx * CIRCLE_KAPPA;
+  const ky = ry * CIRCLE_KAPPA;
+  return {
+    id,
+    start: { x: cx - rx, y: cy },
+    curve: [
+      {
+        kind: "cubic",
+        c1: { x: cx - rx + rx * 0.1, y: cy - ky * 0.92 },
+        c2: { x: cx - kx * 0.45, y: cy - ry },
+        to: { x: cx + rx * 0.025, y: cy - ry },
+      },
+      {
+        kind: "cubic",
+        c1: { x: cx + kx, y: cy - ry * 1.15 },
+        c2: { x: cx + rx - rx * 0.1, y: cy - ky * 0.5 },
+        to: { x: cx + rx, y: cy },
+      },
+      {
+        kind: "cubic",
+        c1: { x: cx + rx - rx * 0.11, y: cy + ky },
+        c2: { x: cx + kx, y: cy + ry },
+        to: { x: cx - rx * 0.01, y: cy + ry },
+      },
+      {
+        kind: "cubic",
+        c1: { x: cx - kx, y: cy + ry * 1.15 },
+        c2: { x: cx - rx + rx * 0.1, y: cy + ky },
+        to: { x: cx - rx, y: cy },
+      },
+    ],
+    closeEdges: [],
+  };
+}
+
 export function closurePoints(
   to: Point,
   edges: MapEdge[],
