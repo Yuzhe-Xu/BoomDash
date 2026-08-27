@@ -3,8 +3,11 @@ import { levels } from "../src/level/LevelCatalog";
 import { level1 } from "../src/level/level1";
 import { level2 } from "../src/level/level2";
 import { level4 } from "../src/level/level4";
+import { level9, LEVEL9_RIGHT_BONUS } from "../src/level/level9";
 import {
   BOMB_WEIGHT,
+  goalBonus,
+  isBonusGoal,
   runScore,
   SCORE_SCALE,
   starsForBestScore,
@@ -26,6 +29,17 @@ describe("runScore", () => {
     expect(runScore(0, 0, level1)).toBe(SCORE_SCALE);
     expect(runScore(level1.timeLimit, level1.maxBombs, level1)).toBe(0);
     expect(runScore(7, 1, level1)).toBe(6400);
+  });
+
+  it("adds bonus points from a harder goal on top of the time-bomb score", () => {
+    expect(runScore(7, 1, level1, 0)).toBe(6400);
+    expect(runScore(7, 1, level1, 500)).toBe(6900);
+    expect(runScore(7, 1, level1, -200)).toBe(6400);
+    expect(goalBonus(level9.goals, "goal-left")).toBe(0);
+    expect(goalBonus(level9.goals, "goal-right")).toBe(LEVEL9_RIGHT_BONUS);
+    expect(goalBonus(level9.goals, null)).toBe(0);
+    expect(isBonusGoal(level9.goals[0]!)).toBe(false);
+    expect(isBonusGoal(level9.goals[1]!)).toBe(true);
   });
 });
 

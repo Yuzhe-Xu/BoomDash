@@ -2,9 +2,10 @@ import { level1 } from "../level/level1";
 import { level2 } from "../level/level2";
 import { level4 } from "../level/level4";
 import { level6 } from "../level/level6";
+import { level9 } from "../level/level9";
 
 export type TutorialPage = {
-  id: "goal" | "deploy" | "flight" | "scroll" | "score" | "asteroid";
+  id: "goal" | "deploy" | "flight" | "scroll" | "score" | "asteroid" | "bonus";
   kicker: string;
   title: string;
   copy: string;
@@ -58,11 +59,21 @@ export const LEVEL6_TUTORIAL_PAGES: TutorialPage[] = [
   },
 ];
 
+export const LEVEL9_TUTORIAL_PAGES: TutorialPage[] = [
+  {
+    id: "bonus",
+    kicker: "BONUS",
+    title: "奖励终点",
+    copy: "带奖励图样的终点更难到达。进入后可获得额外加分。",
+  },
+];
+
 const TUTORIALS_BY_LEVEL: Record<string, TutorialPage[]> = {
   [level1.id]: LEVEL1_TUTORIAL_PAGES,
   [level2.id]: LEVEL2_TUTORIAL_PAGES,
   [level4.id]: LEVEL4_TUTORIAL_PAGES,
   [level6.id]: LEVEL6_TUTORIAL_PAGES,
+  [level9.id]: LEVEL9_TUTORIAL_PAGES,
 };
 
 export function tutorialPagesFor(levelId: string): TutorialPage[] {

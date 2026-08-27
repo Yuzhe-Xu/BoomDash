@@ -30,7 +30,9 @@ export type CurveRegion = {
   closeEdges: MapEdge[];
 };
 
-export type GoalRegion = CurveRegion;
+export type GoalRegion = CurveRegion & {
+  bonusScore?: number;
+};
 export type HazardRegion = CurveRegion;
 
 export type LevelDefinition = {

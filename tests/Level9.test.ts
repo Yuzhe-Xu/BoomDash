@@ -4,7 +4,8 @@ import { findLevel, levels, nextLevel } from "../src/level/LevelCatalog";
 import { level1 } from "../src/level/level1";
 import { level2 } from "../src/level/level2";
 import { level8 } from "../src/level/level8";
-import { level9, level9RightGateAsteroid } from "../src/level/level9";
+import { LEVEL9_RIGHT_BONUS, level9, level9RightGateAsteroid } from "../src/level/level9";
+import { goalBonus } from "../src/level/StarRating";
 import { level10 } from "../src/level/level10";
 import { GameSimulation } from "../src/simulation/GameSimulation";
 import { isInsideAnyGoal, isInsideAnyHazard } from "../src/simulation/LifecycleBounds";
@@ -46,7 +47,9 @@ describe("level 9 catalog", () => {
     expect(level9.worldHeight).toBeLessThan(level2.worldHeight);
     expect(level9.goals).toHaveLength(2);
     expect(leftGoal.closeEdges).toEqual(["left", "top"]);
+    expect(leftGoal.bonusScore ?? 0).toBe(0);
     expect(rightGoal.closeEdges).toEqual([]);
+    expect(rightGoal.bonusScore).toBe(LEVEL9_RIGHT_BONUS);
     expect(rightGoal.curve.every((command) => command.kind === "cubic")).toBe(true);
     expect(level9.hazards).toHaveLength(2);
     expect(mid.closeEdges).toEqual([]);
@@ -87,6 +90,8 @@ describe("level 9 split routes", () => {
       }),
     ).toBe("success");
     expect(isInsideAnyGoal(sim.state.ship, level9.goals, level9.worldHeight)).toBe(true);
+    expect(sim.state.successGoalId).toBe("goal-left");
+    expect(goalBonus(level9.goals, sim.state.successGoalId)).toBe(0);
     expect(sim.state.ship.position.x).toBeLessThan(120);
   });
 
@@ -104,6 +109,8 @@ describe("level 9 split routes", () => {
       }),
     ).toBe("success");
     expect(isInsideAnyGoal(sim.state.ship, level9.goals, level9.worldHeight)).toBe(true);
+    expect(sim.state.successGoalId).toBe("goal-right");
+    expect(goalBonus(level9.goals, sim.state.successGoalId)).toBe(LEVEL9_RIGHT_BONUS);
     expect(sim.state.ship.position.x).toBeGreaterThan(250);
   });
 

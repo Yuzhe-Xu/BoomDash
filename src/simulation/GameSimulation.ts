@@ -1,7 +1,7 @@
 import type { GameEvent, RecordedInput } from "../app/GameEvents";
 import { isSimulating } from "../app/GamePhase";
 import { clampToCanvas, type LevelDefinition } from "../level/LevelDefinition";
-import { evaluateLifecycle } from "./LifecycleBounds";
+import { enteredGoal, evaluateLifecycle } from "./LifecycleBounds";
 import { createInitialState, resetShip, type RunState } from "./GameState";
 import {
   ageEffects,
@@ -61,6 +61,7 @@ export class GameSimulation {
     this.state.effects = [];
     this.state.lastImpulse = { x: 0, y: 0 };
     this.state.usedBombs = 0;
+    this.state.successGoalId = null;
   }
 
   rearmAll(): void {
@@ -92,6 +93,11 @@ export class GameSimulation {
 
     if (result.kind === "success") {
       this.state.phase = "success";
+      this.state.successGoalId = enteredGoal(
+        this.state.ship,
+        this.level.goals,
+        this.level.worldHeight,
+      )?.id ?? null;
       this.state.ship.velocity = { x: 0, y: 0 };
       return;
     }
@@ -183,6 +189,7 @@ export class GameSimulation {
           this.state.tick = 0;
           this.state.failReason = null;
           this.state.usedBombs = 0;
+          this.state.successGoalId = null;
           this.state.effects = [];
           this.state.ship = launchShip(this.state.ship, this.level.launchVelocity);
         }

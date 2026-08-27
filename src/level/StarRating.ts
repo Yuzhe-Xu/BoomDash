@@ -14,10 +14,33 @@ export function clamp01(value: number): number {
   return Math.min(1, Math.max(0, value));
 }
 
-export function runScore(elapsed: number, usedBombs: number, level: ScoreInputs): number {
+export type BonusGoal = {
+  id: string;
+  bonusScore?: number;
+};
+
+export function isBonusGoal(region: { bonusScore?: number }): boolean {
+  return (region.bonusScore ?? 0) > 0;
+}
+
+export function goalBonus(goals: BonusGoal[], goalId: string | null): number {
+  if (!goalId) {
+    return 0;
+  }
+  const goal = goals.find((region) => region.id === goalId);
+  return Math.max(0, Math.round(goal?.bonusScore ?? 0));
+}
+
+export function runScore(
+  elapsed: number,
+  usedBombs: number,
+  level: ScoreInputs,
+  bonus = 0,
+): number {
   const timeFactor = level.timeLimit <= 0 ? 0 : clamp01((level.timeLimit - elapsed) / level.timeLimit);
   const bombFactor = level.maxBombs <= 0 ? 1 : clamp01((level.maxBombs - usedBombs) / level.maxBombs);
-  return Math.round(SCORE_SCALE * (TIME_WEIGHT * timeFactor + BOMB_WEIGHT * bombFactor));
+  const base = Math.round(SCORE_SCALE * (TIME_WEIGHT * timeFactor + BOMB_WEIGHT * bombFactor));
+  return base + Math.max(0, Math.round(bonus));
 }
 
 export function starsForScore(score: number, level: StarThresholds): StarCount {

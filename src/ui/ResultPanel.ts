@@ -12,6 +12,7 @@ const FAIL_COPY: Record<FailReason, string> = {
 
 export type ResultView = {
   score: number;
+  bonus: number;
   stars: StarCount;
   bestScore: number | null;
   canAdvance: boolean;
@@ -51,7 +52,7 @@ export class ResultPanel {
 
   render(
     state: RunState,
-    result: ResultView = { score: 0, stars: 0, bestScore: null, canAdvance: false },
+    result: ResultView = { score: 0, bonus: 0, stars: 0, bestScore: null, canAdvance: false },
   ): void {
     const paused = state.phase === "paused";
     const ended = state.phase === "success" || state.phase === "failed";
@@ -70,6 +71,7 @@ export class ResultPanel {
       state.elapsed.toFixed(2),
       state.usedBombs,
       result.score,
+      result.bonus,
       result.stars,
       result.bestScore ?? "",
       result.canAdvance,
@@ -93,6 +95,9 @@ export class ResultPanel {
     const rows: Array<[string, string, string?]> = [];
     if (success) {
       rows.push(["SCORE", String(result.score), "stat-score"]);
+      if (result.bonus > 0) {
+        rows.push(["BONUS", `+${result.bonus}`, "stat-bonus"]);
+      }
     }
     rows.push(["TIME", `${state.elapsed.toFixed(2)}s`], ["BOMBS", String(state.usedBombs)]);
     if (success && result.bestScore !== null) {

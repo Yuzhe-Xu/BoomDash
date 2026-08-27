@@ -39,6 +39,7 @@ export type RunState = {
   effects: ExplosionFx[];
   lastImpulse: Vec2;
   usedBombs: number;
+  successGoalId: string | null;
 };
 
 export function createInitialState(level: LevelDefinition): RunState {
@@ -55,6 +56,7 @@ export function createInitialState(level: LevelDefinition): RunState {
     effects: [],
     lastImpulse: vec2(0, 0),
     usedBombs: 0,
+    successGoalId: null,
   };
 }
 

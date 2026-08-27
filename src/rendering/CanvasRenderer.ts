@@ -152,6 +152,9 @@ export class CanvasRenderer {
     traceGoalRegion(ctx, region, LOGICAL_WIDTH, worldHeight);
     ctx.fillStyle = bright ? "rgba(93, 255, 154, 0.22)" : hexAlpha(color, 0.1);
     ctx.fill();
+    if ((region.bonusScore ?? 0) > 0) {
+      this.drawBonusMarks(region, worldHeight);
+    }
 
     ctx.beginPath();
     traceGoalCurve(ctx, region);
@@ -160,6 +163,55 @@ export class CanvasRenderer {
     ctx.shadowColor = color;
     ctx.shadowBlur = bright ? 22 : 12;
     ctx.stroke();
+    ctx.restore();
+  }
+
+  private drawBonusMarks(region: GoalRegion, worldHeight: number): void {
+    const { ctx } = this;
+    const polygon = goalPolygon(region, LOGICAL_WIDTH, worldHeight);
+    const minX = Math.min(...polygon.map((point) => point.x));
+    const maxX = Math.max(...polygon.map((point) => point.x));
+    const minY = Math.min(...polygon.map((point) => point.y));
+    const maxY = Math.max(...polygon.map((point) => point.y));
+    const cx = polygon.reduce((sum, point) => sum + point.x, 0) / polygon.length;
+    const cy = polygon.reduce((sum, point) => sum + point.y, 0) / polygon.length;
+
+    ctx.save();
+    ctx.beginPath();
+    traceGoalRegion(ctx, region, LOGICAL_WIDTH, worldHeight);
+    ctx.clip();
+    ctx.fillStyle = "rgba(255, 229, 102, 0.78)";
+    ctx.font = "12px 'Share Tech Mono', monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    let row = 0;
+    for (let y = minY + 12; y < maxY; y += 22) {
+      const offset = (row * 11) % 22;
+      for (let x = minX + 12 + offset; x < maxX; x += 28) {
+        if (pointInPolygon(x, y, polygon)) {
+          ctx.fillText("+", x, y);
+        }
+      }
+      row += 1;
+    }
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.fillStyle = "#ffe566";
+    ctx.shadowColor = "#ffe566";
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.moveTo(0, -8);
+    ctx.lineTo(2.2, -2.2);
+    ctx.lineTo(8, 0);
+    ctx.lineTo(2.2, 2.2);
+    ctx.lineTo(0, 8);
+    ctx.lineTo(-2.2, 2.2);
+    ctx.lineTo(-8, 0);
+    ctx.lineTo(-2.2, -2.2);
+    ctx.closePath();
+    ctx.fill();
     ctx.restore();
   }
 

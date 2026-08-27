@@ -6,7 +6,7 @@ import type { LevelDefinition } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import { findLevel, levels, nextLevel } from "../level/LevelCatalog";
 import { level1, withDebugOverrides } from "../level/level1";
-import { runScore, starsForScore } from "../level/StarRating";
+import { goalBonus, runScore, starsForScore } from "../level/StarRating";
 import { CanvasRenderer } from "../rendering/CanvasRenderer";
 import { GameSimulation } from "../simulation/GameSimulation";
 import { FIXED_DT } from "../simulation/ShipSimulator";
@@ -419,7 +419,12 @@ export class GameApp {
       this.audio.launch();
     }
     if (phase === "success") {
-      const score = runScore(this.sim.state.elapsed, this.sim.state.usedBombs, this.level);
+      const score = runScore(
+        this.sim.state.elapsed,
+        this.sim.state.usedBombs,
+        this.level,
+        goalBonus(this.level.goals, this.sim.state.successGoalId),
+      );
       this.bestScore = recordSuccess(this.level.id, this.sim.state.elapsed, score).bestScore;
       this.audio.success();
     }
@@ -446,9 +451,11 @@ export class GameApp {
     this.flight.render(state.bombs, (planning || flying) && state.bombs.length > 0, state.selectedId, planning);
     this.hud.render(state, this.level, this.audio.muted);
     const success = state.phase === "success";
-    const score = success ? runScore(state.elapsed, state.usedBombs, this.level) : 0;
+    const bonus = success ? goalBonus(this.level.goals, state.successGoalId) : 0;
+    const score = success ? runScore(state.elapsed, state.usedBombs, this.level, bonus) : 0;
     this.result.render(state, {
       score,
+      bonus,
       stars: success ? starsForScore(score, this.level) : 0,
       bestScore: this.bestScore,
       canAdvance: Boolean(nextLevel(this.level.id)),

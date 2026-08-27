@@ -30,7 +30,15 @@ export function isInsideAnyGoal(
   goals: GoalRegion[],
   worldHeight = LOGICAL_HEIGHT,
 ): boolean {
-  return goals.some((region) => isInsideGoal(ship, region, worldHeight));
+  return Boolean(enteredGoal(ship, goals, worldHeight));
+}
+
+export function enteredGoal(
+  ship: Ship,
+  goals: GoalRegion[],
+  worldHeight = LOGICAL_HEIGHT,
+): GoalRegion | undefined {
+  return goals.find((region) => isInsideGoal(ship, region, worldHeight));
 }
 
 export function isInsideAnyHazard(

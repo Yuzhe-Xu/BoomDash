@@ -398,6 +398,10 @@ button.active,
   color: var(--lime);
 }
 
+#result-stats .stat-bonus dd {
+  color: #ffe566;
+}
+
 .panel-kicker {
   margin: 0 0 6px;
   color: var(--cyan);
@@ -1743,5 +1747,153 @@ button.active,
   }
   50% {
     opacity: 0.35;
+  }
+}
+
+.anim-bonus .tut-goal-plain {
+  left: 22px;
+  width: 58px;
+  height: 30px;
+  transform: none;
+  border-radius: 0 0 0 58px;
+  border-left: none;
+}
+
+.anim-bonus .tut-goal-hard {
+  left: auto;
+  right: 22px;
+  top: 16px;
+  width: 46px;
+  height: 46px;
+  transform: none;
+  border-radius: 50%;
+  border: 3px solid var(--lime);
+  background: rgba(93, 255, 154, 0.12);
+  box-shadow: 0 0 12px rgba(93, 255, 154, 0.4);
+  animation: tut-bonus-goal 5s linear infinite;
+}
+
+.tut-bonus-mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  animation: tut-bonus-mark 5s linear infinite;
+}
+
+.tut-bonus-mark::before,
+.tut-bonus-mark::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: #ffe566;
+  box-shadow: 0 0 8px rgba(255, 229, 102, 0.9);
+  transform: translate(-50%, -50%);
+}
+
+.tut-bonus-mark::before {
+  width: 4px;
+  height: 14px;
+}
+
+.tut-bonus-mark::after {
+  width: 14px;
+  height: 4px;
+}
+
+.anim-bonus .tut-craft {
+  animation: tut-bonus-ship 5s linear infinite;
+}
+
+.tut-bonus-tag {
+  position: absolute;
+  right: 10px;
+  top: 68px;
+  z-index: 6;
+  padding: 4px 8px;
+  border: 1px solid #ffe566;
+  background: rgba(20, 16, 6, 0.9);
+  color: #ffe566;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  opacity: 0;
+  animation: tut-bonus-tag 5s linear infinite;
+}
+
+@keyframes tut-bonus-ship {
+  0%,
+  8% {
+    left: 50%;
+    top: 78%;
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+  70% {
+    left: 76%;
+    top: 22%;
+    transform: rotate(18deg);
+  }
+  82%,
+  90% {
+    left: 76%;
+    top: 18%;
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    left: 76%;
+    top: 18%;
+    opacity: 0;
+  }
+}
+
+@keyframes tut-bonus-goal {
+  0%,
+  68% {
+    background: rgba(93, 255, 154, 0.12);
+    box-shadow: 0 0 12px rgba(93, 255, 154, 0.4);
+  }
+  78%,
+  90% {
+    background: rgba(255, 229, 102, 0.22);
+    box-shadow: 0 0 18px rgba(255, 229, 102, 0.7);
+  }
+  100% {
+    background: rgba(93, 255, 154, 0.12);
+    box-shadow: 0 0 12px rgba(93, 255, 154, 0.4);
+  }
+}
+
+@keyframes tut-bonus-mark {
+  0%,
+  68% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  78%,
+  90% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+}
+
+@keyframes tut-bonus-tag {
+  0%,
+  72% {
+    opacity: 0;
+  }
+  80%,
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }

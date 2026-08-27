@@ -81,6 +81,23 @@ test("shows a one-page asteroid tutorial before sector six", async ({ page }) =>
   await expect(page.locator("#level-tag")).toHaveText("SECTOR 06");
 });
 
+test("shows a one-page bonus-goal tutorial before sector nine", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "SECTORS" }).click();
+  await page.getByRole("button", { name: /SECTOR 09/ }).click();
+
+  await expect(page.locator("#tutorial")).toBeVisible();
+  await expect(page.locator("#tutorial-title")).toHaveText("奖励终点");
+  await expect(page.locator(".anim-bonus")).toBeVisible();
+  await expect(page.locator("#tutorial-copy")).toContainText("奖励图样");
+  await expect(page.locator("#tutorial-copy")).toContainText("额外加分");
+  await expect(page.getByRole("button", { name: "BEGIN" })).toBeVisible();
+
+  await page.getByRole("button", { name: "BEGIN" }).click();
+  await expect(page.locator("#tutorial")).toBeHidden();
+  await expect(page.locator("#level-tag")).toHaveText("SECTOR 09");
+});
+
 test("loads the first sector and can place a bomb then launch", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#start-screen")).toBeVisible();

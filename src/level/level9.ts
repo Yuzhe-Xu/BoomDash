@@ -2,6 +2,7 @@ import { closedCubicBlob, closedCubicCircleGoal, cornerQuadraticGoal } from "./G
 import { LOGICAL_WIDTH, type HazardRegion, type LevelDefinition } from "./LevelDefinition";
 
 export const LEVEL9_WORLD_HEIGHT = 1100;
+export const LEVEL9_RIGHT_BONUS = 2000;
 
 export const level9MidAsteroid: HazardRegion = closedCubicBlob(
   "asteroid-mid",
@@ -32,7 +33,7 @@ export const level9: LevelDefinition = {
   },
   goals: [
     cornerQuadraticGoal("goal-left", "top-left", 72, 78, 56),
-    closedCubicCircleGoal("goal-right", 334, 130, 36),
+    { ...closedCubicCircleGoal("goal-right", 334, 130, 36), bonusScore: LEVEL9_RIGHT_BONUS },
   ],
   hazards: [level9MidAsteroid, level9RightGateAsteroid],
   maxBombs: 5,
