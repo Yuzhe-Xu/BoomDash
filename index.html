@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#07080d" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>BOOMDASH // SECTOR 01</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <div id="letterbox">
+        <div id="stage">
+          <canvas id="game" aria-label="BoomDash game canvas"></canvas>
+
+          <header id="hud-top">
+            <div class="hud-cluster">
+              <span id="level-tag">SECTOR 01</span>
+              <span id="hud-stat">BOMBS 0/5</span>
+            </div>
+            <div class="hud-cluster right">
+              <button id="btn-mute" class="icon-btn" type="button" aria-label="mute">
+                SND
+              </button>
+              <button id="btn-pause" class="icon-btn" type="button" aria-label="pause">
+                II
+              </button>
+            </div>
+          </header>
+
+          <div id="bomb-rail" hidden></div>
+
+          <footer id="hud-bottom">
+            <div id="planning-bar">
+              <button id="btn-clear" type="button">CLEAR</button>
+              <button id="btn-delete" type="button">DEL</button>
+              <button id="btn-launch" class="primary" type="button">LAUNCH</button>
+            </div>
+          </footer>
+
+          <aside id="debug" hidden></aside>
+
+          <section id="pause-menu" class="overlay" hidden>
+            <div class="panel">
+              <p class="panel-kicker">SYSTEM</p>
+              <h2>PAUSED</h2>
+              <p id="pause-copy" class="panel-copy">Simulation frozen.</p>
+              <div class="panel-actions">
+                <button id="btn-resume" class="primary" type="button">RESUME</button>
+                <button id="btn-pause-retry" type="button">RETRY</button>
+                <button id="btn-pause-redeploy" type="button">REDEPLOY</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="result" class="overlay" hidden>
+            <div class="panel">
+              <p id="result-kicker" class="panel-kicker">RESULT</p>
+              <h2 id="result-title">SUCCESS</h2>
+              <p id="result-copy" class="panel-copy"></p>
+              <dl id="result-stats"></dl>
+              <div class="panel-actions">
+                <button id="btn-retry" type="button">RETRY</button>
+                <button id="btn-redeploy" class="primary" type="button">REDEPLOY</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
