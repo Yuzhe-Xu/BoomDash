@@ -1,8 +1,9 @@
 import { level1 } from "../level/level1";
 import { level2 } from "../level/level2";
+import { level4 } from "../level/level4";
 
 export type TutorialPage = {
-  id: "goal" | "deploy" | "flight" | "scroll";
+  id: "goal" | "deploy" | "flight" | "scroll" | "score";
   kicker: string;
   title: string;
   copy: string;
@@ -38,9 +39,19 @@ export const LEVEL2_TUTORIAL_PAGES: TutorialPage[] = [
   },
 ];
 
+export const LEVEL4_TUTORIAL_PAGES: TutorialPage[] = [
+  {
+    id: "score",
+    kicker: "RATING",
+    title: "通关评分",
+    copy: "分数由时间（越短越好）和引爆炸弹数（越少越好）加权得到，星级由分数判定。",
+  },
+];
+
 const TUTORIALS_BY_LEVEL: Record<string, TutorialPage[]> = {
   [level1.id]: LEVEL1_TUTORIAL_PAGES,
   [level2.id]: LEVEL2_TUTORIAL_PAGES,
+  [level4.id]: LEVEL4_TUTORIAL_PAGES,
 };
 
 export function tutorialPagesFor(levelId: string): TutorialPage[] {

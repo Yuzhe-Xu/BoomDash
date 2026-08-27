@@ -47,6 +47,23 @@ test("shows a one-page map survey tutorial before sector two", async ({ page }) 
   await expect(page.locator("#level-tag")).toHaveText("SECTOR 02");
 });
 
+test("shows a one-page rating tutorial before sector four", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "SECTORS" }).click();
+  await page.getByRole("button", { name: /SECTOR 04/ }).click();
+
+  await expect(page.locator("#tutorial")).toBeVisible();
+  await expect(page.locator("#tutorial-title")).toHaveText("通关评分");
+  await expect(page.locator(".anim-score")).toBeVisible();
+  await expect(page.locator("#tutorial-copy")).toContainText("时间");
+  await expect(page.locator("#tutorial-copy")).toContainText("引爆炸弹");
+  await expect(page.getByRole("button", { name: "BEGIN" })).toBeVisible();
+
+  await page.getByRole("button", { name: "BEGIN" }).click();
+  await expect(page.locator("#tutorial")).toBeHidden();
+  await expect(page.locator("#level-tag")).toHaveText("SECTOR 04");
+});
+
 test("loads the first sector and can place a bomb then launch", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#start-screen")).toBeVisible();

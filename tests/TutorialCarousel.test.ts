@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 import { level1 } from "../src/level/level1";
 import { level2 } from "../src/level/level2";
 import { level3 } from "../src/level/level3";
+import { level4 } from "../src/level/level4";
 import {
   LEVEL1_TUTORIAL_PAGES,
   LEVEL2_TUTORIAL_PAGES,
+  LEVEL4_TUTORIAL_PAGES,
   clampTutorialPage,
   isFirstTutorialPage,
   isLastTutorialPage,
@@ -27,10 +29,20 @@ describe("tutorialPages", () => {
     expect(tutorialPagesFor(level2.id)).toEqual(LEVEL2_TUTORIAL_PAGES);
   });
 
+  it("defines one rating page for sector four", () => {
+    expect(LEVEL4_TUTORIAL_PAGES).toHaveLength(1);
+    expect(LEVEL4_TUTORIAL_PAGES[0]?.id).toBe("score");
+    expect(LEVEL4_TUTORIAL_PAGES[0]?.copy).toContain("时间");
+    expect(LEVEL4_TUTORIAL_PAGES[0]?.copy).toContain("引爆炸弹");
+    expect(LEVEL4_TUTORIAL_PAGES[0]?.copy).toContain("星级");
+    expect(tutorialPagesFor(level4.id)).toEqual(LEVEL4_TUTORIAL_PAGES);
+  });
+
   it("appears before sectors that have briefing pages", () => {
     expect(shouldShowTutorial(level1.id)).toBe(true);
     expect(shouldShowTutorial(level2.id)).toBe(true);
     expect(shouldShowTutorial(level3.id)).toBe(false);
+    expect(shouldShowTutorial(level4.id)).toBe(true);
     expect(shouldShowTutorial("missing")).toBe(false);
   });
 
