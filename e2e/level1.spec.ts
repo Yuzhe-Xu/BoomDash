@@ -1,9 +1,35 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function enterFirstSector(page: Page): Promise<void> {
+  await page.getByRole("button", { name: "START" }).click();
+  await page.getByRole("button", { name: "SKIP" }).click();
+}
+
+test("shows a three-page tutorial before sector one", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "START" }).click();
+
+  await expect(page.locator("#tutorial")).toBeVisible();
+  await expect(page.locator("#tutorial-title")).toHaveText("游戏目标");
+  await expect(page.locator(".anim-goal")).toBeVisible();
+
+  await page.getByRole("button", { name: "NEXT" }).click();
+  await expect(page.locator("#tutorial-title")).toHaveText("炸弹部署");
+  await expect(page.locator(".anim-deploy")).toBeVisible();
+
+  await page.getByRole("button", { name: "NEXT" }).click();
+  await expect(page.locator("#tutorial-title")).toHaveText("飞船飞行");
+  await expect(page.locator(".anim-flight")).toBeVisible();
+
+  await page.getByRole("button", { name: "BEGIN" }).click();
+  await expect(page.locator("#tutorial")).toBeHidden();
+  await expect(page.locator("#level-tag")).toHaveText("SECTOR 01");
+});
 
 test("loads the first sector and can place a bomb then launch", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#start-screen")).toBeVisible();
-  await page.getByRole("button", { name: "START" }).click();
+  await enterFirstSector(page);
   const canvas = page.locator("#game");
   await expect(canvas).toBeVisible();
   await expect(page.locator("#level-tag")).toHaveText("SECTOR 01");
@@ -20,7 +46,7 @@ test("loads the first sector and can place a bomb then launch", async ({ page })
 
 test("returns to the main menu from pause", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "START" }).click();
+  await enterFirstSector(page);
   await page.getByRole("button", { name: "pause" }).click();
 
   await expect(page.locator("#pause-menu")).toBeVisible();

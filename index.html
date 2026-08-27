@@ -89,6 +89,66 @@
             </div>
           </section>
 
+          <section id="tutorial" class="overlay" hidden>
+            <div class="panel tutorial-panel">
+              <p id="tutorial-kicker" class="panel-kicker">OBJECTIVE</p>
+              <h2 id="tutorial-title">游戏目标</h2>
+              <div id="tutorial-stage" class="tutorial-stage">
+                <article class="tutorial-slide is-active" data-page="0">
+                  <div class="tutorial-anim anim-goal" aria-hidden="true">
+                    <div class="tut-stars"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <div class="tut-goal"></div>
+                    <div class="tut-craft">
+                      <i class="tut-flame"></i>
+                      <i class="tut-ship"></i>
+                    </div>
+                    <div class="tut-time"><span>TIME LIMIT</span><b><i></i></b></div>
+                    <div class="tut-badge">LINK STABLE</div>
+                  </div>
+                </article>
+                <article class="tutorial-slide" data-page="1">
+                  <div class="tutorial-anim anim-deploy" aria-hidden="true">
+                    <div class="tut-stars"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <div class="tut-goal"></div>
+                    <div class="tut-path"></div>
+                    <div class="tut-craft idle">
+                      <i class="tut-ship"></i>
+                    </div>
+                    <div class="tut-bomb bomb-a"><span>1</span></div>
+                    <div class="tut-bomb bomb-b"><span>2</span></div>
+                    <div class="tut-ring ring-a"></div>
+                    <div class="tut-ring ring-b"></div>
+                    <div class="tut-tap tap-a"></div>
+                    <div class="tut-tap tap-b"></div>
+                    <div class="tut-cursor"></div>
+                  </div>
+                </article>
+                <article class="tutorial-slide" data-page="2">
+                  <div class="tutorial-anim anim-flight" aria-hidden="true">
+                    <div class="tut-stars"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <div class="tut-goal"></div>
+                    <div class="tut-flash"></div>
+                    <div class="tut-bomb bomb-a armed"><span>1</span></div>
+                    <div class="tut-blast"></div>
+                    <div class="tut-craft">
+                      <i class="tut-flame"></i>
+                      <i class="tut-ship"></i>
+                    </div>
+                    <div class="tut-time"><span>TIME LIMIT</span><b><i></i></b></div>
+                    <div class="tut-badge">LINK STABLE</div>
+                  </div>
+                </article>
+              </div>
+              <p id="tutorial-copy" class="panel-copy">在规定时间内使飞船进入终点区域。</p>
+              <div id="tutorial-dots" class="tutorial-dots"></div>
+              <div class="panel-actions">
+                <button id="btn-tutorial-next" class="primary" type="button">NEXT</button>
+                <button id="btn-tutorial-prev" type="button" hidden>BACK</button>
+                <button id="btn-tutorial-skip" type="button">SKIP</button>
+              </div>
+            </div>
+          </section>
+
           <section id="result" class="overlay" hidden>
             <div class="panel">
               <p id="result-kicker" class="panel-kicker">RESULT</p>

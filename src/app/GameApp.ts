@@ -16,6 +16,8 @@ import { Hud } from "../ui/Hud";
 import { PlanningControls } from "../ui/PlanningControls";
 import { ResultPanel } from "../ui/ResultPanel";
 import { StartScreen } from "../ui/StartScreen";
+import { TutorialCarousel } from "../ui/TutorialCarousel";
+import { shouldShowTutorial } from "../ui/tutorialPages";
 
 export class GameApp {
   private readonly debug = new URLSearchParams(window.location.search).get("debug") === "1";
@@ -30,6 +32,7 @@ export class GameApp {
   private readonly flight: FlightControls;
   private readonly result: ResultPanel;
   private readonly startScreen: StartScreen;
+  private readonly tutorial: TutorialCarousel;
   private readonly debugView: DebugOverlay;
   private accumulator = 0;
   private previousTime = performance.now();
@@ -41,6 +44,7 @@ export class GameApp {
   private seenFx = new Set<string>();
   private readonly stage: HTMLElement;
   private started = false;
+  private pendingLevelId: string | null = null;
   private pointerPrevious: { x: number; y: number } | null = null;
 
   constructor(private readonly root: HTMLElement) {
@@ -84,6 +88,17 @@ export class GameApp {
       mustEl<HTMLButtonElement>("#btn-start"),
       mustEl<HTMLButtonElement>("#btn-sectors"),
       mustEl<HTMLButtonElement>("#btn-sectors-back"),
+    );
+    this.tutorial = new TutorialCarousel(
+      mustEl("#tutorial"),
+      mustEl("#tutorial-kicker"),
+      mustEl("#tutorial-title"),
+      mustEl("#tutorial-copy"),
+      mustEl("#tutorial-stage"),
+      mustEl("#tutorial-dots"),
+      mustEl<HTMLButtonElement>("#btn-tutorial-prev"),
+      mustEl<HTMLButtonElement>("#btn-tutorial-next"),
+      mustEl<HTMLButtonElement>("#btn-tutorial-skip"),
     );
     this.debugView = new DebugOverlay(mustEl("#debug"));
     this.stage = mustEl("#stage");
@@ -135,10 +150,13 @@ export class GameApp {
       menu: () => this.openMenu(),
     });
     this.startScreen.bind({
-      start: () => this.beginLevel(level1.id),
+      start: () => this.requestLevel(level1.id),
       openSelector: () => this.startScreen.showSelector(),
-      selectLevel: (id) => this.beginLevel(id),
+      selectLevel: (id) => this.requestLevel(id),
       back: () => this.startScreen.showHome(),
+    });
+    this.tutorial.bind({
+      complete: () => this.beginPendingLevel(),
     });
 
     canvas.addEventListener("pointerdown", (event) => {
@@ -297,6 +315,24 @@ export class GameApp {
     this.sim.enqueue({ type: "redeploy" });
   }
 
+  private requestLevel(id: string): void {
+    if (shouldShowTutorial(id)) {
+      this.pendingLevelId = id;
+      this.audio.unlock();
+      this.startScreen.hide();
+      this.tutorial.show();
+      this.syncUi();
+      return;
+    }
+    this.beginLevel(id);
+  }
+
+  private beginPendingLevel(): void {
+    const id = this.pendingLevelId ?? level1.id;
+    this.pendingLevelId = null;
+    this.beginLevel(id);
+  }
+
   private beginLevel(id: string): void {
     const definition = findLevel(id);
     if (!definition) {
@@ -311,6 +347,8 @@ export class GameApp {
     this.renderer.resetVisuals();
     this.camera.reset(this.level.worldHeight);
     this.started = true;
+    this.pendingLevelId = null;
+    this.tutorial.hide();
     this.startScreen.hide();
     this.syncUi();
   }
@@ -326,6 +364,8 @@ export class GameApp {
 
   private openMenu(): void {
     this.started = false;
+    this.pendingLevelId = null;
+    this.tutorial.hide();
     this.camera.reset(this.level.worldHeight);
     this.startScreen.render(levels);
     this.startScreen.showHome();
