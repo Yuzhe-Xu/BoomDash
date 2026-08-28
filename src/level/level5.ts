@@ -1,4 +1,4 @@
-import { closedCubicCircleGoal } from "./GoalGeometry";
+import { circleRegion } from "./GoalGeometry";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH, type LevelDefinition } from "./LevelDefinition";
 
 const GOAL_RADIUS = 31.25;
@@ -16,7 +16,7 @@ export const level5: LevelDefinition = {
     arc: "upper",
   },
   goals: [
-    closedCubicCircleGoal(
+    circleRegion(
       "goal-center",
       LOGICAL_WIDTH * 0.5,
       TOP_GAP + GOAL_RADIUS,

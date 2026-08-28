@@ -1,4 +1,4 @@
-import { topClosedQuadraticGoal } from "./GoalGeometry";
+import { topClosedCircularArc } from "./GoalGeometry";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH, type LevelDefinition } from "./LevelDefinition";
 
 export const level1: LevelDefinition = {
@@ -12,7 +12,7 @@ export const level1: LevelDefinition = {
     ry: 58,
     arc: "upper",
   },
-  goals: [topClosedQuadraticGoal("goal-top", 70, 320, 92)],
+  goals: [topClosedCircularArc("goal-top", 70, 320, 92)],
   hazards: [],
   maxBombs: 5,
   unlimitedBombs: false,

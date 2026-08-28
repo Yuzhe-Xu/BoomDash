@@ -1,23 +1,25 @@
-import { closedCubicBlob, closedCubicCircleGoal, cornerQuadraticGoal } from "./GoalGeometry";
+import { circleRegion, cornerQuarterCircle, roundedRectCentered } from "./GoalGeometry";
 import { LOGICAL_WIDTH, type HazardRegion, type LevelDefinition } from "./LevelDefinition";
 
 export const LEVEL9_WORLD_HEIGHT = 1100;
 export const LEVEL9_RIGHT_BONUS = 2000;
 
-export const level9MidAsteroid: HazardRegion = closedCubicBlob(
+export const level9MidAsteroid: HazardRegion = roundedRectCentered(
   "asteroid-mid",
   LOGICAL_WIDTH * 0.5,
   640,
   88,
   58,
+  28,
 );
 
-export const level9RightGateAsteroid: HazardRegion = closedCubicBlob(
+export const level9RightGateAsteroid: HazardRegion = roundedRectCentered(
   "asteroid-right-gate",
   230,
   240,
   60,
   40,
+  20,
 );
 
 export const level9: LevelDefinition = {
@@ -32,8 +34,8 @@ export const level9: LevelDefinition = {
     arc: "upper",
   },
   goals: [
-    cornerQuadraticGoal("goal-left", "top-left", 72, 78, 56),
-    { ...closedCubicCircleGoal("goal-right", 334, 130, 36), bonusScore: LEVEL9_RIGHT_BONUS },
+    cornerQuarterCircle("goal-left", "top-left", 72),
+    { ...circleRegion("goal-right", 334, 130, 36), bonusScore: LEVEL9_RIGHT_BONUS },
   ],
   hazards: [level9MidAsteroid, level9RightGateAsteroid],
   maxBombs: 5,

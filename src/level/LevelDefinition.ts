@@ -19,7 +19,17 @@ export type Point = {
 export type CurveCommand =
   | { kind: "line"; to: Point }
   | { kind: "quadratic"; control: Point; to: Point }
-  | { kind: "cubic"; c1: Point; c2: Point; to: Point };
+  | { kind: "cubic"; c1: Point; c2: Point; to: Point }
+  | {
+      kind: "arc";
+      cx: number;
+      cy: number;
+      radius: number;
+      startAngle: number;
+      endAngle: number;
+      counterclockwise?: boolean;
+      to: Point;
+    };
 
 export type MapEdge = "top" | "right" | "bottom" | "left";
 

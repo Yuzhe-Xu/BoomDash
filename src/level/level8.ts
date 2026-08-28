@@ -1,12 +1,13 @@
-import { closedCubicBlob, cornerQuadraticGoal } from "./GoalGeometry";
+import { cornerQuarterCircle, roundedRectCentered } from "./GoalGeometry";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH, type HazardRegion, type LevelDefinition } from "./LevelDefinition";
 
-export const level8GoalAsteroid: HazardRegion = closedCubicBlob(
+export const level8GoalAsteroid: HazardRegion = roundedRectCentered(
   "asteroid-below-goal",
   310,
   175,
   78,
   50,
+  25,
 );
 
 export const level8: LevelDefinition = {
@@ -20,7 +21,7 @@ export const level8: LevelDefinition = {
     ry: 58,
     arc: "upper",
   },
-  goals: [cornerQuadraticGoal("goal-top-right", "top-right", 120, 115, 92)],
+  goals: [cornerQuarterCircle("goal-top-right", "top-right", 120)],
   hazards: [level8GoalAsteroid],
   maxBombs: 5,
   unlimitedBombs: false,

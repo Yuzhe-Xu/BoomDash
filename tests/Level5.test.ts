@@ -42,14 +42,14 @@ describe("level 5 catalog", () => {
     expect(level5.worldHeight).toBeLessThan(level1.worldHeight * 1.2);
     expect(level5.goals).toHaveLength(1);
     expect(goal?.closeEdges).toEqual([]);
-    expect(goal?.curve).toHaveLength(4);
-    expect(goal?.curve.every((command) => command.kind === "cubic")).toBe(true);
-    if (goal && first?.curve[0]?.kind === "quadratic" && goal.curve[0]?.kind === "cubic") {
-      const diameter = (goal.curve[0].to.x - goal.start.x) * 2;
+    expect(goal?.curve).toHaveLength(1);
+    expect(goal?.curve[0]?.kind).toBe("arc");
+    if (goal && first?.curve[0]?.kind === "arc" && goal.curve[0]?.kind === "arc") {
+      const diameter = goal.curve[0].radius * 2;
       expect(diameter).toBeCloseTo((first.curve[0].to.x - first.start.x) / 4, 5);
       expect(goal.start.x).toBeCloseTo(CENTER_X);
-      expect(goal.curve[0].to.y).toBeGreaterThan(0);
-      expect(goal.curve[1]?.to.y).toBeLessThan(200);
+      expect(goal.curve[0].cy).toBeGreaterThan(0);
+      expect(goal.curve[0].cy + goal.curve[0].radius).toBeLessThan(200);
     }
   });
 });

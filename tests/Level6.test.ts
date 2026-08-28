@@ -43,8 +43,8 @@ describe("level 6 catalog", () => {
     expect(level6.goals).toEqual(level1.goals);
     expect(level6.hazards).toHaveLength(1);
     expect(hazard.closeEdges).toEqual([]);
-    expect(hazard.curve).toHaveLength(4);
-    expect(hazard.curve.every((command) => command.kind === "cubic")).toBe(true);
+    expect(hazard.curve.some((command) => command.kind === "arc")).toBe(true);
+    expect(hazard.curve.some((command) => command.kind === "line")).toBe(true);
     expect(Math.min(...ys)).toBeGreaterThan(300);
     expect(Math.max(...ys)).toBeLessThan(level6.start.cy);
     expect(Math.min(...xs)).toBeGreaterThan(50);

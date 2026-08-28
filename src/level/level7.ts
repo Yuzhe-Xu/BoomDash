@@ -1,22 +1,24 @@
-import { closedCubicBlob, topClosedQuadraticGoal } from "./GoalGeometry";
+import { roundedRectCentered, topClosedCircularArc } from "./GoalGeometry";
 import { LOGICAL_WIDTH, type HazardRegion, type LevelDefinition } from "./LevelDefinition";
 
 export const LEVEL7_WORLD_HEIGHT = 1200;
 
-export const level7LowerAsteroid: HazardRegion = closedCubicBlob(
+export const level7LowerAsteroid: HazardRegion = roundedRectCentered(
   "asteroid-center-lower",
   LOGICAL_WIDTH * 0.5,
   820,
   70,
   50,
+  25,
 );
 
-export const level7UpperAsteroid: HazardRegion = closedCubicBlob(
+export const level7UpperAsteroid: HazardRegion = roundedRectCentered(
   "asteroid-center-upper",
   LOGICAL_WIDTH * 0.5,
   380,
   70,
   50,
+  25,
 );
 
 export const level7: LevelDefinition = {
@@ -30,7 +32,7 @@ export const level7: LevelDefinition = {
     ry: 58,
     arc: "upper",
   },
-  goals: [topClosedQuadraticGoal("goal-top", 70, 320, 92)],
+  goals: [topClosedCircularArc("goal-top", 70, 320, 92)],
   hazards: [level7LowerAsteroid, level7UpperAsteroid],
   maxBombs: 5,
   unlimitedBombs: false,

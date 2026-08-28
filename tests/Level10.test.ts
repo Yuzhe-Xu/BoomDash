@@ -52,10 +52,10 @@ describe("level 10 catalog", () => {
     expect(level10.worldHeight).toBeGreaterThan(level1.worldHeight);
     expect(level10.goals).toHaveLength(1);
     expect(goal.closeEdges).toEqual(["top"]);
-    expect(goal.curve[0]?.kind).toBe("quadratic");
-    if (goal.curve[0]?.kind === "quadratic" && first?.curve[0]?.kind === "quadratic") {
+    expect(goal.curve[0]?.kind).toBe("arc");
+    if (goal.curve[0]?.kind === "arc" && first?.curve[0]?.kind === "arc") {
       expect(goal.curve[0].to.x - goal.start.x).toBeCloseTo(first.curve[0].to.x - first.start.x, 0);
-      expect(goal.curve[0].control.y / 2).toBeCloseTo(first.curve[0].control.y / 2, 0);
+      expect(goal.curve[0].radius).toBeCloseTo(first.curve[0].radius, 0);
       expect((goal.start.x + goal.curve[0].to.x) / 2).toBeGreaterThan(195);
     }
     expect(level10.hazards).toHaveLength(2);

@@ -1,4 +1,4 @@
-import { cornerQuadraticGoal } from "./GoalGeometry";
+import { cornerQuarterCircle } from "./GoalGeometry";
 import { LOGICAL_HEIGHT, type LevelDefinition } from "./LevelDefinition";
 
 export const level3: LevelDefinition = {
@@ -13,8 +13,8 @@ export const level3: LevelDefinition = {
     arc: "upper",
   },
   goals: [
-    cornerQuadraticGoal("goal-left", "top-left", 78, 78, 64),
-    cornerQuadraticGoal("goal-right", "top-right", 78, 78, 64),
+    cornerQuarterCircle("goal-left", "top-left", 78),
+    cornerQuarterCircle("goal-right", "top-right", 78),
   ],
   hazards: [],
   maxBombs: 5,

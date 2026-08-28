@@ -55,7 +55,7 @@ describe("level 9 catalog", () => {
     expect(leftGoal.bonusScore ?? 0).toBe(0);
     expect(rightGoal.closeEdges).toEqual([]);
     expect(rightGoal.bonusScore).toBe(LEVEL9_RIGHT_BONUS);
-    expect(rightGoal.curve.every((command) => command.kind === "cubic")).toBe(true);
+    expect(rightGoal.curve.every((command) => command.kind === "arc")).toBe(true);
     expect(level9.hazards).toHaveLength(2);
     expect(mid.closeEdges).toEqual([]);
     expect(gate.closeEdges).toEqual([]);

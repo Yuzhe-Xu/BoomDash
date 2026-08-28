@@ -1,23 +1,25 @@
-import { closedCubicBlob } from "./GoalGeometry";
+import { circleRegion, roundedRectCentered } from "./GoalGeometry";
 import { LOGICAL_WIDTH, type HazardRegion, type LevelDefinition } from "./LevelDefinition";
 
 export const LEVEL15_WORLD_HEIGHT = 2080;
 export const LEVEL15_RIGHT_BONUS = 2500;
 
-export const level15CenterAsteroid: HazardRegion = closedCubicBlob(
+export const level15CenterAsteroid: HazardRegion = roundedRectCentered(
   "asteroid-center-lower",
   195,
   1200,
   52,
   40,
+  20,
 );
 
-export const level15UpperAsteroid: HazardRegion = closedCubicBlob(
+export const level15UpperAsteroid: HazardRegion = roundedRectCentered(
   "asteroid-center-upper",
   195,
   800,
   45,
   34,
+  18,
 );
 
 export const level15: LevelDefinition = {
@@ -32,8 +34,8 @@ export const level15: LevelDefinition = {
     arc: "upper",
   },
   goals: [
-    { ...closedCubicBlob("goal-left", 70, 760, 44, 44) },
-    { ...closedCubicBlob("goal-right-bonus", 280, 760, 70, 70), bonusScore: LEVEL15_RIGHT_BONUS },
+    circleRegion("goal-left", 70, 760, 44),
+    { ...circleRegion("goal-right-bonus", 280, 760, 70), bonusScore: LEVEL15_RIGHT_BONUS },
   ],
   hazards: [level15CenterAsteroid, level15UpperAsteroid],
   maxBombs: 8,

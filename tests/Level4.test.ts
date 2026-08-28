@@ -37,10 +37,10 @@ describe("level 4 catalog", () => {
     expect(level4.goals).toHaveLength(1);
     expect(goal?.closeEdges).toEqual(["top"]);
     expect(goal?.start.x).toBe(40);
-    expect(goal?.curve[0]?.kind).toBe("quadratic");
-    if (goal?.curve[0]?.kind === "quadratic" && first?.curve[0]?.kind === "quadratic") {
+    expect(goal?.curve[0]?.kind).toBe("arc");
+    if (goal?.curve[0]?.kind === "arc" && first?.curve[0]?.kind === "arc") {
       expect(goal.curve[0].to.x - goal.start.x).toBeCloseTo((first.curve[0].to.x - first.start.x) / 3, 0);
-      expect(goal.curve[0].control.y / 2).toBeCloseTo(first.curve[0].control.y / 6, 0);
+      expect(goal.curve[0].radius).toBeLessThan(first.curve[0].radius);
       expect((goal.start.x + goal.curve[0].to.x) / 2).toBeLessThan(LOGICAL_CENTER);
     }
   });

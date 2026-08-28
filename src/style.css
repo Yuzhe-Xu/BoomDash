@@ -1076,7 +1076,7 @@ button.active,
   width: 216px;
   height: 82px;
   border: 2px solid #ff4d6d;
-  border-radius: 48% 52% 45% 55% / 42% 48% 52% 58%;
+  border-radius: 28px;
   background: rgba(255, 77, 109, 0.08);
   box-shadow: 0 0 12px rgba(255, 77, 109, 0.35);
   overflow: hidden;
