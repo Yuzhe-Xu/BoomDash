@@ -153,7 +153,7 @@ export class GameSimulation {
     }
 
     if (event.type === "redeploy") {
-      this.reset(false);
+      this.reset(true);
       return;
     }
 

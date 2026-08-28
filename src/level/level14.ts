@@ -13,6 +13,15 @@ export const level14CenterAsteroid: HazardRegion = roundedRectCentered(
   20,
 );
 
+export const level14BonusAsteroid: HazardRegion = roundedRectCentered(
+  "asteroid-below-bonus",
+  348,
+  868,
+  54,
+  36,
+  16,
+);
+
 export const level14: LevelDefinition = {
   id: "level-14",
   name: "SECTOR 14",
@@ -28,7 +37,7 @@ export const level14: LevelDefinition = {
     circleRegion("goal-left", 70, 760, 44),
     { ...circleRegion("goal-right-bonus", 320, 760, 50), bonusScore: LEVEL14_RIGHT_BONUS },
   ],
-  hazards: [level14CenterAsteroid],
+  hazards: [level14CenterAsteroid, level14BonusAsteroid],
   maxBombs: 8,
   unlimitedBombs: false,
   blastRadius: 110,

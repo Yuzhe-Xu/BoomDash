@@ -1,12 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { goalPolygon } from "../src/level/GoalGeometry";
 import { findLevel, levels, nextLevel } from "../src/level/LevelCatalog";
+import { level1 } from "../src/level/level1";
 import { level10 } from "../src/level/level10";
 import { level11, level11LowerAsteroid, level11UpperAsteroid } from "../src/level/level11";
 import { level12 } from "../src/level/level12";
 import { level13 } from "../src/level/level13";
-import { level14, LEVEL14_RIGHT_BONUS } from "../src/level/level14";
-import { level15, LEVEL15_RIGHT_BONUS } from "../src/level/level15";
+import { level14, level14BonusAsteroid, LEVEL14_RIGHT_BONUS } from "../src/level/level14";
+import {
+  level15,
+  level15GoalAsteroidBottom,
+  level15GoalAsteroidLeft,
+  level15GoalAsteroidRight,
+} from "../src/level/level15";
 import { goalBonus } from "../src/level/StarRating";
 import { GameSimulation } from "../src/simulation/GameSimulation";
 import { FIXED_DT } from "../src/simulation/ShipSimulator";
@@ -43,7 +49,7 @@ describe("levels 11-15 catalog", () => {
     expect(level12.worldHeight).toBeGreaterThan(level11.worldHeight);
     expect(level13.worldHeight).toBe(level11.worldHeight);
     expect(level14.worldHeight).toBeGreaterThan(level13.worldHeight);
-    expect(level15.worldHeight).toBeGreaterThan(level14.worldHeight);
+    expect(level15.worldHeight).toBe(level1.worldHeight);
 
     for (const level of [level11, level12, level13, level14, level15]) {
       expect(level.maxBombs).toBe(8);
@@ -63,10 +69,8 @@ describe("levels 11-15 catalog", () => {
     const lowerYs = lower.map((point) => point.y);
     const upperYs = upper.map((point) => point.y);
 
-    expect(Math.max(...lowerXs) - Math.min(...lowerXs)).toBeGreaterThan(200);
-    expect(Math.max(...lowerXs) - Math.min(...lowerXs)).toBeLessThan(280);
-    expect(Math.max(...upperXs) - Math.min(...upperXs)).toBeGreaterThan(200);
-    expect(Math.max(...upperXs) - Math.min(...upperXs)).toBeLessThan(300);
+    expect(Math.max(...lowerXs) - Math.min(...lowerXs)).toBe(195);
+    expect(Math.max(...upperXs) - Math.min(...upperXs)).toBe(195);
     expect(Math.max(...lowerXs)).toBe(390);
     expect(Math.min(...upperXs)).toBe(0);
     expect(Math.max(...lowerYs) - Math.min(...lowerYs)).toBeLessThan(150);
@@ -76,14 +80,39 @@ describe("levels 11-15 catalog", () => {
     expect(level11UpperAsteroid.curve.some((command) => command.kind === "line")).toBe(true);
   });
 
-  it("keeps the difficult upper route as the bonus branch in sectors 14 and 15", () => {
-    const [sector14Regular, sector14Bonus] = level14.goals;
-    const [sector15Regular, sector15Bonus] = level15.goals;
-    expect(sector14Regular.closeEdges).toEqual([]);
-    expect(sector14Bonus.bonusScore).toBe(LEVEL14_RIGHT_BONUS);
-    expect(sector15Regular.closeEdges).toEqual([]);
-    expect(sector15Bonus.bonusScore).toBe(LEVEL15_RIGHT_BONUS);
-    expect(goalPolygon(sector15Bonus, 390, level15.worldHeight).length).toBeGreaterThan(20);
+  it("puts a belt under sector 14's bonus goal to force a narrow approach", () => {
+    const [, bonus] = level14.goals;
+    const bonusPoly = goalPolygon(bonus, 390, level14.worldHeight);
+    const beltPoly = goalPolygon(level14BonusAsteroid, 390, level14.worldHeight);
+    const bonusXs = bonusPoly.map((point) => point.x);
+    const bonusYs = bonusPoly.map((point) => point.y);
+    const beltXs = beltPoly.map((point) => point.x);
+    const beltYs = beltPoly.map((point) => point.y);
+    expect(bonus.bonusScore).toBe(LEVEL14_RIGHT_BONUS);
+    expect(Math.min(...beltYs)).toBeGreaterThan(Math.max(...bonusYs));
+    expect(Math.min(...beltXs)).toBeGreaterThan(Math.min(...bonusXs));
+    expect(Math.max(...beltXs)).toBeGreaterThan(360);
+    expect(level14.hazards).toHaveLength(2);
+  });
+
+  it("makes sector 15 a short reverse-entry cup around one mid-left goal", () => {
+    const [goal] = level15.goals;
+    const goalPoly = goalPolygon(goal, 390, level15.worldHeight);
+    const bottomPoly = goalPolygon(level15GoalAsteroidBottom, 390, level15.worldHeight);
+    const leftPoly = goalPolygon(level15GoalAsteroidLeft, 390, level15.worldHeight);
+    const rightPoly = goalPolygon(level15GoalAsteroidRight, 390, level15.worldHeight);
+    const goalXs = goalPoly.map((point) => point.x);
+    const goalYs = goalPoly.map((point) => point.y);
+    const bottomYs = bottomPoly.map((point) => point.y);
+    const leftXs = leftPoly.map((point) => point.x);
+    const rightXs = rightPoly.map((point) => point.x);
+    expect(level15.goals).toHaveLength(1);
+    expect(goal.bonusScore).toBeUndefined();
+    expect(Math.max(...goalXs)).toBeLessThan(195);
+    expect(Math.min(...bottomYs)).toBeGreaterThan(Math.max(...goalYs) - 4);
+    expect(Math.max(...leftXs)).toBeLessThanOrEqual(Math.min(...goalXs) + 2);
+    expect(Math.min(...rightXs)).toBeGreaterThanOrEqual(Math.max(...goalXs) - 2);
+    expect(level15.hazards).toHaveLength(3);
   });
 });
 
@@ -106,16 +135,8 @@ describe("levels 11-15 routes", () => {
       { x: 48, y: 950 },
       { x: 380, y: 760 },
     ]],
-    [level14, [
-      { x: 140, y: 1050 },
-      { x: 330, y: 1000 },
-      { x: 330, y: 950 },
-    ]],
-    [level15, [
-      { x: 140, y: 1450 },
-      { x: 300, y: 1400 },
-      { x: 390, y: 1100 },
-    ]],
+    [level14, [{ x: 125, y: 1050 }]],
+    [level15, [{ x: 206, y: 270, atY: 305 }]],
   ])("can complete %s with its intended timed blasts", (level, bombs) => {
     const sim = flyWithBlasts(level, bombs);
     expect(
@@ -131,7 +152,7 @@ describe("levels 11-15 routes", () => {
     }
   });
 
-  it.each([level11, level12, level13, level14, level15])(
+  it.each([level11, level12, level13, level14])(
     "rejects a straight flight through the first hazard in %s",
     (level) => {
       const sim = new GameSimulation(level);
@@ -143,18 +164,34 @@ describe("levels 11-15 routes", () => {
     },
   );
 
-  it("preserves the bonus outcome for the sector 15 right branch", () => {
-    const sim = flyWithBlasts(level15, [
-      { x: 140, y: 1450 },
-      { x: 300, y: 1400 },
-      { x: 390, y: 1100 },
+  it("rejects a late right turn into sector 14's bonus belt", () => {
+    const sim = flyWithBlasts(level14, [
+      { x: 140, y: 1050 },
+      { x: 330, y: 1000 },
+      { x: 330, y: 950 },
     ]);
-    expect(goalBonus(level15.goals, sim.state.successGoalId)).toBe(LEVEL15_RIGHT_BONUS);
+    expect(sim.state.phase).toBe("failed");
+    expect(sim.state.failReason).toBe("asteroid");
+  });
+
+  it("rejects flying into sector 15's cup from below", () => {
+    const sim = flyWithBlasts(level15, [{ x: 250, y: 650 }]);
+    expect(sim.state.phase).toBe("failed");
+    expect(sim.state.failReason).toBe("asteroid");
+  });
+
+  it("overshoots sector 15 if the ship never reverses", () => {
+    const sim = new GameSimulation(level15);
+    sim.enqueue({ type: "launch" });
+    sim.updateFixed(FIXED_DT);
+    runToEnd(sim, level15.timeLimit);
+    expect(sim.state.phase).toBe("failed");
+    expect(sim.state.failReason).toBe("overshoot");
   });
 });
 
 type Level = typeof level11;
-type Bomb = { x: number; y: number };
+type Bomb = { x: number; y: number; atY?: number };
 
 function flyWithBlasts(level: Level, bombs: Bomb[]): GameSimulation {
   const sim = new GameSimulation(level);
@@ -165,7 +202,7 @@ function flyWithBlasts(level: Level, bombs: Bomb[]): GameSimulation {
   sim.updateFixed(FIXED_DT);
   const pending = bombs.map((bomb, index) => ({
     id: `b${index + 1}`,
-    y: bomb.y,
+    y: bomb.atY ?? bomb.y,
     done: false,
   }));
   const limit = Math.ceil((level.timeLimit + 1) / FIXED_DT);

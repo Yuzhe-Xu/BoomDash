@@ -27,14 +27,30 @@ describe("GamePhase", () => {
     expect(sim.state.ship.position).toEqual(paused.ship.position);
   });
 
-  it("redeploy restores planning without bombs", () => {
+  it("redeploy restores planning and keeps bomb layout", () => {
     const sim = new GameSimulation(level1);
     sim.enqueue({ type: "place", x: 100, y: 100 });
+    sim.enqueue({ type: "place", x: 220, y: 480 });
+    sim.updateFixed(FIXED_DT);
+    sim.enqueue({ type: "launch" });
+    sim.updateFixed(FIXED_DT);
+    sim.enqueue({ type: "detonate", id: "b1" });
     sim.updateFixed(FIXED_DT);
     sim.enqueue({ type: "redeploy" });
     sim.updateFixed(FIXED_DT);
     expect(sim.state.phase).toBe("planning");
-    expect(sim.state.bombs).toHaveLength(0);
+    expect(sim.state.ship.velocity).toEqual({ x: 0, y: 0 });
+    expect(sim.state.bombs).toHaveLength(2);
+    expect(sim.state.bombs[0]).toMatchObject({
+      id: "b1",
+      position: { x: 100, y: 100 },
+      state: "armed",
+    });
+    expect(sim.state.bombs[1]).toMatchObject({
+      id: "b2",
+      position: { x: 220, y: 480 },
+      state: "armed",
+    });
   });
 
   it("places bombs on exact click positions without snapping", () => {

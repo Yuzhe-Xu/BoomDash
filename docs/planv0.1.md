@@ -134,7 +134,7 @@ worldY = viewportY + offsetY
 - 第二关成功：不显示不存在的下一关按钮。
 - 失败和成功都保留 `RETRY`、`REDEPLOY` 和 `SECTORS`。
 - `RETRY` 保留炸弹部署并重置飞船。
-- `REDEPLOY` 清除炸弹并回到当前关卡部署阶段。
+- `REDEPLOY` 保留当前炸弹布置、重新装填已引爆的炸弹并回到当前关卡部署阶段。
 - `SECTORS` 返回开始界面，之后可以选择任意当前关卡。
 
 ## 6. 代码改动范围

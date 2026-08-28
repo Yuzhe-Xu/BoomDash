@@ -5,9 +5,9 @@ export const LEVEL11_WORLD_HEIGHT = 1560;
 
 export const level11LowerAsteroid: HazardRegion = roundedRectRegion(
   "asteroid-belt-lower-right",
-  150,
+  LOGICAL_WIDTH / 2,
   1170,
-  240,
+  LOGICAL_WIDTH / 2,
   140,
   28,
 );
@@ -16,7 +16,7 @@ export const level11UpperAsteroid: HazardRegion = roundedRectRegion(
   "asteroid-belt-upper-left",
   0,
   500,
-  278,
+  LOGICAL_WIDTH / 2,
   135,
   28,
 );
