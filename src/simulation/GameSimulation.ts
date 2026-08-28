@@ -1,6 +1,7 @@
 import type { GameEvent, RecordedInput } from "../app/GameEvents";
 import { isSimulating } from "../app/GamePhase";
 import { clampToCanvas, type LevelDefinition } from "../level/LevelDefinition";
+import { hazardsAtTime, regionsAtTime } from "../level/GoalGeometry";
 import { dustDragAtShip, enteredGoal, evaluateLifecycle } from "./LifecycleBounds";
 import { createInitialState, resetShip, type RunState } from "./GameState";
 import {
@@ -82,7 +83,11 @@ export class GameSimulation {
     this.state.elapsed += dt;
     this.state.ship = applyDrag(
       this.state.ship,
-      dustDragAtShip(this.state.ship, this.level.dustRegions, this.level.worldHeight),
+      dustDragAtShip(
+        this.state.ship,
+        regionsAtTime(this.level.dustRegions, this.level.dustMotion, this.state.elapsed),
+        this.level.worldHeight,
+      ),
       dt,
     );
     this.state.ship = integrateShip(this.state.ship, dt);
@@ -94,7 +99,7 @@ export class GameSimulation {
       this.state.elapsed,
       this.level.timeLimit,
       this.level.worldHeight,
-      this.level.hazards,
+      hazardsAtTime(this.level.hazards, this.level.hazardMotion, this.state.elapsed),
     );
 
     if (result.kind === "success") {

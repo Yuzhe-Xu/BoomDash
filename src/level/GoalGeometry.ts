@@ -2,7 +2,10 @@ import {
   LOGICAL_HEIGHT,
   LOGICAL_WIDTH,
   type CurveCommand,
+  type CurveRegion,
   type GoalRegion,
+  type HazardMotion,
+  type HazardRegion,
   type MapEdge,
   type Point,
 } from "./LevelDefinition";
@@ -171,6 +174,182 @@ export function circleRegion(id: string, cx: number, cy: number, radius: number)
     ],
     closeEdges: [],
   };
+}
+
+export function ringSegmentRegion(
+  id: string,
+  cx: number,
+  cy: number,
+  innerRadius: number,
+  outerRadius: number,
+  startAngle: number,
+  endAngle: number,
+): HazardRegion {
+  if (innerRadius <= 0 || outerRadius <= innerRadius) {
+    throw new Error("Ring radii must satisfy 0 < innerRadius < outerRadius");
+  }
+  return {
+    id,
+    start: {
+      x: cx + outerRadius * Math.cos(startAngle),
+      y: cy + outerRadius * Math.sin(startAngle),
+    },
+    curve: [
+      {
+        kind: "arc",
+        cx,
+        cy,
+        radius: outerRadius,
+        startAngle,
+        endAngle,
+        to: {
+          x: cx + outerRadius * Math.cos(endAngle),
+          y: cy + outerRadius * Math.sin(endAngle),
+        },
+      },
+      {
+        kind: "line",
+        to: {
+          x: cx + innerRadius * Math.cos(endAngle),
+          y: cy + innerRadius * Math.sin(endAngle),
+        },
+      },
+      {
+        kind: "arc",
+        cx,
+        cy,
+        radius: innerRadius,
+        startAngle: endAngle,
+        endAngle: startAngle,
+        counterclockwise: true,
+        to: {
+          x: cx + innerRadius * Math.cos(startAngle),
+          y: cy + innerRadius * Math.sin(startAngle),
+        },
+      },
+    ],
+    closeEdges: [],
+  };
+}
+
+export function equalRingSegments(
+  idPrefix: string,
+  cx: number,
+  cy: number,
+  innerRadius: number,
+  outerRadius: number,
+  count: number,
+  segmentAngle: number,
+  firstStartAngle: number,
+): HazardRegion[] {
+  if (count < 1) {
+    throw new Error("Ring segment count must be at least 1");
+  }
+  if (segmentAngle <= 0 || segmentAngle * count >= TWO_PI) {
+    throw new Error("Ring segments must leave equally spaced gaps");
+  }
+  const spacing = TWO_PI / count;
+  return Array.from({ length: count }, (_, index) => {
+    const start = firstStartAngle + index * spacing;
+    return ringSegmentRegion(
+      `${idPrefix}-${index + 1}`,
+      cx,
+      cy,
+      innerRadius,
+      outerRadius,
+      start,
+      start + segmentAngle,
+    );
+  });
+}
+
+export function rotateRegion<T extends CurveRegion>(region: T, center: Point, angle: number): T {
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+  const rotatePoint = (point: Point): Point => {
+    const x = point.x - center.x;
+    const y = point.y - center.y;
+    return {
+      x: center.x + x * cos - y * sin,
+      y: center.y + x * sin + y * cos,
+    };
+  };
+
+  return {
+    ...region,
+    start: rotatePoint(region.start),
+    curve: region.curve.map((command) => {
+      if (command.kind === "line") {
+        return { ...command, to: rotatePoint(command.to) };
+      }
+      if (command.kind === "quadratic") {
+        return { ...command, control: rotatePoint(command.control), to: rotatePoint(command.to) };
+      }
+      if (command.kind === "cubic") {
+        return {
+          ...command,
+          c1: rotatePoint(command.c1),
+          c2: rotatePoint(command.c2),
+          to: rotatePoint(command.to),
+        };
+      }
+      const rotatedCenter = rotatePoint({ x: command.cx, y: command.cy });
+      return {
+        ...command,
+        cx: rotatedCenter.x,
+        cy: rotatedCenter.y,
+        startAngle: command.startAngle + angle,
+        endAngle: command.endAngle + angle,
+        to: rotatePoint(command.to),
+      };
+    }),
+  } as T;
+}
+
+export function regionsAtTime<T extends CurveRegion>(
+  regions: T[],
+  motion: HazardMotion | undefined,
+  elapsed: number,
+): T[] {
+  if (!motion) {
+    return regions;
+  }
+  const rawAngle = (motion.initialAngle ?? 0) + motion.angularVelocity * elapsed;
+  const angle = motion.angleRange
+    ? motion.angleRange.mode === "wrap"
+      ? wrappedAngle(rawAngle, motion.angleRange.min, motion.angleRange.max)
+      : oscillatingAngle(rawAngle, motion.angleRange.min, motion.angleRange.max)
+    : rawAngle;
+  if (angle === 0) {
+    return regions;
+  }
+  return regions.map((region) => rotateRegion(region, motion.center, angle));
+}
+
+export function hazardsAtTime(
+  hazards: HazardRegion[],
+  motion: HazardMotion | undefined,
+  elapsed: number,
+): HazardRegion[] {
+  return regionsAtTime(hazards, motion, elapsed);
+}
+
+function oscillatingAngle(value: number, min: number, max: number): number {
+  if (max <= min) {
+    throw new Error("Motion angle range must satisfy min < max");
+  }
+  const span = max - min;
+  const period = span * 2;
+  const phase = ((value - min) % period + period) % period;
+  return phase <= span ? min + phase : max - (phase - span);
+}
+
+function wrappedAngle(value: number, min: number, max: number): number {
+  if (max <= min) {
+    throw new Error("Motion angle range must satisfy min < max");
+  }
+  const span = max - min;
+  return ((value - min) % span + span) % span + min;
 }
 
 export function roundedRectRegion(

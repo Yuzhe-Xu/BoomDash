@@ -1,6 +1,8 @@
 import {
   goalPolygon,
+  hazardsAtTime,
   pointInPolygon,
+  regionsAtTime,
   traceGoalCurve,
   traceGoalRegion,
 } from "../level/GoalGeometry";
@@ -79,7 +81,7 @@ export class CanvasRenderer {
     this.drawBackdrop(cameraY, level.worldHeight);
     ctx.save();
     ctx.translate(0, -cameraY);
-    for (const region of level.dustRegions) {
+    for (const region of regionsAtTime(level.dustRegions, level.dustMotion, state.elapsed)) {
       this.drawDustRegion(region, level.worldHeight);
     }
     const goalColor = state.phase === "success" ? "#9dffc4" : "#5dff9a";
@@ -87,7 +89,7 @@ export class CanvasRenderer {
     for (const region of level.goals) {
       this.drawGoalRegion(region, goalColor, goalBright, level.worldHeight);
     }
-    for (const region of level.hazards) {
+    for (const region of hazardsAtTime(level.hazards, level.hazardMotion, state.elapsed)) {
       this.drawHazardRegion(region, level.worldHeight);
     }
     this.effects.pushTrail(shipPos.x, shipPos.y, state.phase === "flying" || state.phase === "success");
@@ -104,7 +106,7 @@ export class CanvasRenderer {
 
     this.drawShip(shipPos.x, shipPos.y, state.ship.velocity.x, state.ship.velocity.y, state.phase);
     if (debug) {
-      this.drawGoalDebug(level);
+      this.drawGoalDebug(level, state.elapsed);
       this.effects.impulseHint(ctx, state.effects);
     }
     ctx.restore();
@@ -365,7 +367,7 @@ export class CanvasRenderer {
     ctx.restore();
   }
 
-  private drawGoalDebug(level: LevelDefinition): void {
+  private drawGoalDebug(level: LevelDefinition, elapsed: number): void {
     const { ctx } = this;
     ctx.save();
     ctx.fillStyle = "rgba(255, 176, 32, 0.14)";
@@ -375,13 +377,13 @@ export class CanvasRenderer {
       ctx.fill();
     }
     ctx.fillStyle = "rgba(255, 77, 109, 0.2)";
-    for (const region of level.hazards) {
+    for (const region of hazardsAtTime(level.hazards, level.hazardMotion, elapsed)) {
       ctx.beginPath();
       traceGoalRegion(ctx, region, LOGICAL_WIDTH, level.worldHeight);
       ctx.fill();
     }
     ctx.fillStyle = "rgba(190, 200, 210, 0.28)";
-    for (const region of level.dustRegions) {
+    for (const region of regionsAtTime(level.dustRegions, level.dustMotion, elapsed)) {
       ctx.beginPath();
       traceGoalRegion(ctx, region, LOGICAL_WIDTH, level.worldHeight);
       ctx.fill();

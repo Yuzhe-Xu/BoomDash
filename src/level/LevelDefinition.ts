@@ -16,6 +16,17 @@ export type Point = {
   y: number;
 };
 
+export type HazardMotion = {
+  center: Point;
+  angularVelocity: number;
+  initialAngle?: number;
+  angleRange?: {
+    min: number;
+    max: number;
+    mode?: "ping-pong" | "wrap";
+  };
+};
+
 export type CurveCommand =
   | { kind: "line"; to: Point }
   | { kind: "quadratic"; control: Point; to: Point }
@@ -55,7 +66,9 @@ export type LevelDefinition = {
   start: ZoneDefinition;
   goals: GoalRegion[];
   hazards: HazardRegion[];
+  hazardMotion?: HazardMotion;
   dustRegions: DustRegion[];
+  dustMotion?: HazardMotion;
   maxBombs: number;
   unlimitedBombs: boolean;
   blastRadius: number;

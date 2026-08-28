@@ -173,7 +173,11 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
   await expect(page.getByRole("button", { name: /SECTOR 23/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 24/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 25/ })).toBeEnabled();
-  await expect(page.locator(".sector-option")).toHaveCount(25);
+  await expect(page.getByRole("button", { name: /SECTOR 26/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 27/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 28/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 29/ })).toBeEnabled();
+  await expect(page.locator(".sector-option")).toHaveCount(29);
 
   const sectorList = page.locator("#sector-list");
   await expect(sectorList).toHaveCSS("overflow-y", "auto");
@@ -228,4 +232,81 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
     await page.mouse.up();
   }
   await expect(page.locator("#debug")).toContainText("camera 0");
+});
+
+test("renders sector twenty-six's center goal and asteroid rings", async ({ page }) => {
+  await page.goto("/?debug=1&unlimited=0");
+  await page.getByRole("button", { name: "SECTORS" }).click();
+  await page.getByRole("button", { name: /SECTOR 26/ }).click();
+
+  await expect(page.locator("#level-tag")).toHaveText("SECTOR 26");
+  await expect(page.locator("#hud-stat")).toHaveText("BOMBS 0/8");
+  const canvas = page.locator("#game");
+  await canvas.hover();
+  await page.mouse.wheel(0, -1000);
+  await expect(page.locator("#debug")).toContainText("camera 0.0");
+
+  const pixels = await canvas.evaluate((element: HTMLCanvasElement) => {
+    const ctx = element.getContext("2d");
+    if (!ctx) {
+      return { goal: 0, hazard: 0 };
+    }
+    const data = ctx.getImageData(0, 0, element.width, element.height).data;
+    let goal = 0;
+    let hazard = 0;
+    for (let index = 0; index < data.length; index += 4) {
+      const red = data[index];
+      const green = data[index + 1];
+      const blue = data[index + 2];
+      if (green > 160 && green > red * 1.35 && green > blue * 1.15) {
+        goal += 1;
+      }
+      if (red > 150 && red > green * 1.3 && red > blue * 1.15) {
+        hazard += 1;
+      }
+    }
+    return { goal, hazard };
+  });
+
+  expect(pixels.goal).toBeGreaterThan(100);
+  expect(pixels.hazard).toBeGreaterThan(100);
+});
+
+test("renders sectors twenty-eight and twenty-nine's hazards and dust", async ({ page }) => {
+  for (const sector of [28, 29]) {
+    await page.goto("/?debug=1&unlimited=0");
+    await page.getByRole("button", { name: "SECTORS" }).click();
+    await page.getByRole("button", { name: new RegExp(`SECTOR ${sector}`) }).click();
+
+    await expect(page.locator("#level-tag")).toHaveText(`SECTOR ${sector}`);
+    const pixels = await page.locator("#game").evaluate((element: HTMLCanvasElement) => {
+      const ctx = element.getContext("2d");
+      if (!ctx) {
+        return { goal: 0, hazard: 0, dust: 0 };
+      }
+      const data = ctx.getImageData(0, 0, element.width, element.height).data;
+      let goal = 0;
+      let hazard = 0;
+      let dust = 0;
+      for (let index = 0; index < data.length; index += 4) {
+        const red = data[index];
+        const green = data[index + 1];
+        const blue = data[index + 2];
+        if (green > 160 && green > red * 1.35 && green > blue * 1.15) {
+          goal += 1;
+        }
+        if (red > 150 && red > green * 1.3 && red > blue * 1.15) {
+          hazard += 1;
+        }
+        if (red > 80 && green > 80 && blue > 80 && Math.max(red, green, blue) - Math.min(red, green, blue) < 35) {
+          dust += 1;
+        }
+      }
+      return { goal, hazard, dust };
+    });
+
+    expect(pixels.goal).toBeGreaterThan(100);
+    expect(pixels.hazard).toBeGreaterThan(100);
+    expect(pixels.dust).toBeGreaterThan(100);
+  }
 });

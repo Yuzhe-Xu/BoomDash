@@ -5,6 +5,7 @@ import { level22 } from "../src/level/level22";
 import { level23, level23DustBelt } from "../src/level/level23";
 import { level24, level24DustField } from "../src/level/level24";
 import { level25, level25DustField } from "../src/level/level25";
+import { level26 } from "../src/level/level26";
 import type { LevelDefinition } from "../src/level/LevelDefinition";
 import { GameSimulation } from "../src/simulation/GameSimulation";
 import {
@@ -21,7 +22,7 @@ describe("levels 23-25 catalog and geometry", () => {
     expect(nextLevel(level22.id)).toBe(level23);
     expect(nextLevel(level23.id)).toBe(level24);
     expect(nextLevel(level24.id)).toBe(level25);
-    expect(nextLevel(level25.id)).toBeUndefined();
+    expect(nextLevel(level25.id)).toBe(level26);
   });
 
   it("adds a full-width dust belt below sector twenty-three's central asteroid", () => {
