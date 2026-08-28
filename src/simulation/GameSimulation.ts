@@ -4,8 +4,10 @@ import { clampToCanvas, type LevelDefinition } from "../level/LevelDefinition";
 import { hazardsAtTime, regionsAtTime } from "../level/GoalGeometry";
 import { dustDragAtShip, enteredGoal, evaluateLifecycle } from "./LifecycleBounds";
 import { createInitialState, resetShip, type RunState } from "./GameState";
+import { gravityAcceleration, planetsOf } from "./GravitySystem";
 import {
   ageEffects,
+  applyAcceleration,
   applyDrag,
   detonateBomb,
   integrateShip,
@@ -90,6 +92,11 @@ export class GameSimulation {
       ),
       dt,
     );
+    this.state.ship = applyAcceleration(
+      this.state.ship,
+      gravityAcceleration(this.state.ship.position, this.level.planets),
+      dt,
+    );
     this.state.ship = integrateShip(this.state.ship, dt);
     this.state.effects = ageEffects(this.state.effects, dt);
     const goals = regionsAtTime(this.level.goals, this.level.goalMotion, this.state.elapsed);
@@ -101,6 +108,7 @@ export class GameSimulation {
       this.level.timeLimit,
       this.level.worldHeight,
       hazardsAtTime(this.level.hazards, this.level.hazardMotion, this.state.elapsed),
+      planetsOf(this.level.planets),
     );
 
     if (result.kind === "success") {

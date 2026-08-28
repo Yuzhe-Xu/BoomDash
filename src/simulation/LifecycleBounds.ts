@@ -1,9 +1,16 @@
 import { circleHitsGoalRegion, distanceToPolygon, goalPolygon } from "../level/GoalGeometry";
-import type { CurveRegion, DustRegion, GoalRegion, HazardRegion } from "../level/LevelDefinition";
+import type {
+  CurveRegion,
+  DustRegion,
+  GoalRegion,
+  HazardRegion,
+  PlanetDefinition,
+} from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import type { FailReason } from "../app/GamePhase";
 import type { Ship } from "./GameState";
 import type { Vec2 } from "./Vec2";
+import { shipHitsAnyPlanet } from "./GravitySystem";
 
 export type LifecycleResult =
   | { kind: "alive" }
@@ -75,7 +82,12 @@ export function evaluateLifecycle(
   timeLimit: number,
   worldHeight = LOGICAL_HEIGHT,
   hazards: HazardRegion[] = [],
+  planets: PlanetDefinition[] = [],
 ): LifecycleResult {
+  if (shipHitsAnyPlanet(ship, planets)) {
+    return { kind: "failed", reason: "planet" };
+  }
+
   if (isInsideAnyGoal(ship, goals, worldHeight)) {
     return { kind: "success" };
   }

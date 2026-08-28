@@ -98,6 +98,23 @@ test("shows a one-page bonus-goal tutorial before sector nine", async ({ page })
   await expect(page.locator("#level-tag")).toHaveText("SECTOR 09");
 });
 
+test("shows a one-page gravity tutorial before sector thirty-one", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "SECTORS" }).click();
+  await page.getByRole("button", { name: /SECTOR 31/ }).click();
+
+  await expect(page.locator("#tutorial")).toBeVisible();
+  await expect(page.locator("#tutorial-title")).toHaveText("行星引力");
+  await expect(page.locator(".anim-gravity")).toBeVisible();
+  await expect(page.locator("#tutorial-copy")).toContainText("引力");
+  await expect(page.locator("#tutorial-copy")).toContainText("撞击表面立即失败");
+  await expect(page.getByRole("button", { name: "BEGIN" })).toBeVisible();
+
+  await page.getByRole("button", { name: "BEGIN" }).click();
+  await expect(page.locator("#tutorial")).toBeHidden();
+  await expect(page.locator("#level-tag")).toHaveText("SECTOR 31");
+});
+
 test("shows a one-page interstellar-dust tutorial before sector twenty-one", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "SECTORS" }).click();
@@ -178,7 +195,8 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
   await expect(page.getByRole("button", { name: /SECTOR 28/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 29/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 30/ })).toBeEnabled();
-  await expect(page.locator(".sector-option")).toHaveCount(30);
+  await expect(page.getByRole("button", { name: /SECTOR 31/ })).toBeEnabled();
+  await expect(page.locator(".sector-option")).toHaveCount(31);
 
   const sectorList = page.locator("#sector-list");
   await expect(sectorList).toHaveCSS("overflow-y", "auto");
@@ -271,6 +289,50 @@ test("renders sector twenty-six's center goal and asteroid rings", async ({ page
 
   expect(pixels.goal).toBeGreaterThan(100);
   expect(pixels.hazard).toBeGreaterThan(100);
+});
+
+test("renders sector thirty-one's rocky planet and top goal", async ({ page }) => {
+  await page.goto("/?debug=1&unlimited=0");
+  await page.getByRole("button", { name: "SECTORS" }).click();
+  await page.getByRole("button", { name: /SECTOR 31/ }).click();
+  await page.getByRole("button", { name: "BEGIN" }).click();
+
+  await expect(page.locator("#level-tag")).toHaveText("SECTOR 31");
+  await expect(page.locator("#hud-stat")).toHaveText("BOMBS 0/8");
+
+  const pixels = await page.locator("#game").evaluate((element: HTMLCanvasElement) => {
+    const ctx = element.getContext("2d");
+    if (!ctx) {
+      return { goal: 0, planet: 0, variance: 0 };
+    }
+    const data = ctx.getImageData(0, 0, element.width, element.height).data;
+    let goal = 0;
+    let planet = 0;
+    let sum = 0;
+    let sumSq = 0;
+    let count = 0;
+    for (let index = 0; index < data.length; index += 4) {
+      const red = data[index];
+      const green = data[index + 1];
+      const blue = data[index + 2];
+      if (green > 160 && green > red * 1.35 && green > blue * 1.15) {
+        goal += 1;
+      }
+      if (red > 70 && green > 28 && blue < green && red > green && red - blue > 18) {
+        planet += 1;
+        const luma = red * 0.3 + green * 0.59 + blue * 0.11;
+        sum += luma;
+        sumSq += luma * luma;
+        count += 1;
+      }
+    }
+    const mean = count > 0 ? sum / count : 0;
+    return { goal, planet, variance: count > 0 ? sumSq / count - mean * mean : 0 };
+  });
+
+  expect(pixels.goal).toBeGreaterThan(100);
+  expect(pixels.planet).toBeGreaterThan(100);
+  expect(pixels.variance).toBeGreaterThan(40);
 });
 
 test("renders sectors twenty-eight through thirty's dynamic regions", async ({ page }) => {

@@ -19,7 +19,7 @@ describe("level 30 rotating bonus goal", () => {
   it("is appended after sector twenty-nine without a lock", () => {
     expect(findLevel(level30.id)).toBe(level30);
     expect(nextLevel(level29.id)).toBe(level30);
-    expect(nextLevel(level30.id)).toBeUndefined();
+    expect(nextLevel(level30.id)?.id).toBe("level-31");
   });
 
   it("keeps sector twenty-nine and adds a rotating bonus goal", () => {

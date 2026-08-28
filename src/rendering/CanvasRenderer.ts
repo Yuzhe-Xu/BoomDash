@@ -9,8 +9,10 @@ import {
 import type { DustRegion, GoalRegion, HazardRegion, LevelDefinition } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import type { Bomb, RunState } from "../simulation/GameState";
+import { planetsOf } from "../simulation/GravitySystem";
 import { lerp } from "../simulation/Vec2";
 import { EffectsRenderer } from "./EffectsRenderer";
+import { drawPlanet } from "./PlanetRenderer";
 
 const STAR_SEED = 1801;
 
@@ -88,6 +90,9 @@ export class CanvasRenderer {
     const goalBright = state.phase === "success";
     for (const region of regionsAtTime(level.goals, level.goalMotion, state.elapsed)) {
       this.drawGoalRegion(region, goalColor, goalBright, level.worldHeight);
+    }
+    for (const planet of planetsOf(level.planets)) {
+      drawPlanet(this.ctx, planet, debug);
     }
     for (const region of hazardsAtTime(level.hazards, level.hazardMotion, state.elapsed)) {
       this.drawHazardRegion(region, level.worldHeight);
@@ -386,6 +391,12 @@ export class CanvasRenderer {
     for (const region of regionsAtTime(level.dustRegions, level.dustMotion, elapsed)) {
       ctx.beginPath();
       traceGoalRegion(ctx, region, LOGICAL_WIDTH, level.worldHeight);
+      ctx.fill();
+    }
+    ctx.fillStyle = "rgba(255, 176, 32, 0.16)";
+    for (const planet of planetsOf(level.planets)) {
+      ctx.beginPath();
+      ctx.arc(planet.center.x, planet.center.y, planet.radius, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.restore();

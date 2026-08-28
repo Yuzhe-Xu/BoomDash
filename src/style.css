@@ -2007,3 +2007,138 @@ button.active,
     opacity: 0.25;
   }
 }
+
+.tut-planet {
+  position: absolute;
+  left: 50%;
+  top: 108px;
+  width: 72px;
+  height: 72px;
+  margin-left: -36px;
+  overflow: hidden;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 214, 170, 0.42), transparent 34%),
+    radial-gradient(circle at 68% 74%, rgba(28, 16, 12, 0.88), transparent 46%),
+    radial-gradient(circle at 42% 40%, #c49a72 0%, #8a5a3c 42%, #4a3224 72%, #16100c 100%);
+  box-shadow:
+    inset -12px -10px 18px rgba(0, 0, 0, 0.55),
+    0 0 16px rgba(255, 150, 82, 0.22);
+}
+
+.tut-planet i {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(42, 28, 20, 0.55);
+  box-shadow: inset 1px 1px 0 rgba(198, 154, 110, 0.35);
+}
+
+.tut-planet i:nth-child(1) {
+  left: 16px;
+  top: 18px;
+  width: 14px;
+  height: 14px;
+}
+
+.tut-planet i:nth-child(2) {
+  left: 40px;
+  top: 28px;
+  width: 9px;
+  height: 9px;
+}
+
+.tut-planet i:nth-child(3) {
+  left: 22px;
+  top: 44px;
+  width: 11px;
+  height: 11px;
+}
+
+.tut-planet i:nth-child(4) {
+  left: 46px;
+  top: 12px;
+  width: 7px;
+  height: 7px;
+}
+
+.anim-gravity .tut-craft-fall {
+  animation: tut-gravity-fall 5.2s linear infinite;
+}
+
+.anim-gravity .tut-craft-sling {
+  animation: tut-gravity-sling 5.2s linear infinite;
+}
+
+.tut-gravity-alert {
+  animation: tut-gravity-alert 5.2s linear infinite;
+}
+
+@keyframes tut-gravity-fall {
+  0%,
+  8% {
+    left: 50%;
+    top: 186px;
+    opacity: 1;
+  }
+  38% {
+    left: 50%;
+    top: 132px;
+    opacity: 1;
+  }
+  46% {
+    left: 50%;
+    top: 122px;
+    opacity: 0;
+  }
+  100% {
+    left: 50%;
+    top: 122px;
+    opacity: 0;
+  }
+}
+
+@keyframes tut-gravity-sling {
+  0%,
+  12% {
+    left: 78%;
+    top: 186px;
+    opacity: 1;
+  }
+  36% {
+    left: 72%;
+    top: 142px;
+  }
+  52% {
+    left: 58%;
+    top: 108px;
+  }
+  68% {
+    left: 38%;
+    top: 78px;
+  }
+  86% {
+    left: 50%;
+    top: 36px;
+    opacity: 1;
+  }
+  100% {
+    left: 50%;
+    top: 28px;
+    opacity: 0;
+  }
+}
+
+@keyframes tut-gravity-alert {
+  0%,
+  36% {
+    opacity: 0;
+  }
+  42%,
+  54% {
+    opacity: 1;
+  }
+  62%,
+  100% {
+    opacity: 0;
+  }
+}

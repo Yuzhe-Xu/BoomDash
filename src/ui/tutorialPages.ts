@@ -4,9 +4,10 @@ import { level4 } from "../level/level4";
 import { level6 } from "../level/level6";
 import { level9 } from "../level/level9";
 import { level21 } from "../level/level21";
+import { level31 } from "../level/level31";
 
 export type TutorialPage = {
-  id: "goal" | "deploy" | "flight" | "scroll" | "score" | "asteroid" | "bonus" | "dust";
+  id: "goal" | "deploy" | "flight" | "scroll" | "score" | "asteroid" | "bonus" | "dust" | "gravity";
   kicker: string;
   title: string;
   copy: string;
@@ -78,6 +79,15 @@ export const LEVEL21_TUTORIAL_PAGES: TutorialPage[] = [
   },
 ];
 
+export const LEVEL31_TUTORIAL_PAGES: TutorialPage[] = [
+  {
+    id: "gravity",
+    kicker: "GRAVITY",
+    title: "行星引力",
+    copy: "行星具有引力。飞船速度的大小和方向会改变轨迹；撞击表面立即失败。",
+  },
+];
+
 const TUTORIALS_BY_LEVEL: Record<string, TutorialPage[]> = {
   [level1.id]: LEVEL1_TUTORIAL_PAGES,
   [level2.id]: LEVEL2_TUTORIAL_PAGES,
@@ -85,6 +95,7 @@ const TUTORIALS_BY_LEVEL: Record<string, TutorialPage[]> = {
   [level6.id]: LEVEL6_TUTORIAL_PAGES,
   [level9.id]: LEVEL9_TUTORIAL_PAGES,
   [level21.id]: LEVEL21_TUTORIAL_PAGES,
+  [level31.id]: LEVEL31_TUTORIAL_PAGES,
 };
 
 export function tutorialPagesFor(levelId: string): TutorialPage[] {

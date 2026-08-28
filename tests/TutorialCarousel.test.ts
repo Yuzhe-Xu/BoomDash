@@ -12,6 +12,7 @@ import { level10 } from "../src/level/level10";
 import { level20 } from "../src/level/level20";
 import { level21 } from "../src/level/level21";
 import { level22 } from "../src/level/level22";
+import { level31 } from "../src/level/level31";
 import {
   LEVEL1_TUTORIAL_PAGES,
   LEVEL2_TUTORIAL_PAGES,
@@ -19,6 +20,7 @@ import {
   LEVEL6_TUTORIAL_PAGES,
   LEVEL9_TUTORIAL_PAGES,
   LEVEL21_TUTORIAL_PAGES,
+  LEVEL31_TUTORIAL_PAGES,
   clampTutorialPage,
   isFirstTutorialPage,
   isLastTutorialPage,
@@ -74,6 +76,15 @@ describe("tutorialPages", () => {
     expect(tutorialPagesFor(level21.id)).toEqual(LEVEL21_TUTORIAL_PAGES);
   });
 
+  it("defines one gravity page for sector thirty-one", () => {
+    expect(LEVEL31_TUTORIAL_PAGES).toHaveLength(1);
+    expect(LEVEL31_TUTORIAL_PAGES[0]?.id).toBe("gravity");
+    expect(LEVEL31_TUTORIAL_PAGES[0]?.copy).toContain("引力");
+    expect(LEVEL31_TUTORIAL_PAGES[0]?.copy).toContain("速度");
+    expect(LEVEL31_TUTORIAL_PAGES[0]?.copy).toContain("撞击表面立即失败");
+    expect(tutorialPagesFor(level31.id)).toEqual(LEVEL31_TUTORIAL_PAGES);
+  });
+
   it("appears before sectors that have briefing pages", () => {
     expect(shouldShowTutorial(level1.id)).toBe(true);
     expect(shouldShowTutorial(level2.id)).toBe(true);
@@ -88,6 +99,7 @@ describe("tutorialPages", () => {
     expect(shouldShowTutorial(level20.id)).toBe(false);
     expect(shouldShowTutorial(level21.id)).toBe(true);
     expect(shouldShowTutorial(level22.id)).toBe(false);
+    expect(shouldShowTutorial(level31.id)).toBe(true);
     expect(shouldShowTutorial("missing")).toBe(false);
   });
 

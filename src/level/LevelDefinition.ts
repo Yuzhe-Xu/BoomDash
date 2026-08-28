@@ -59,6 +59,16 @@ export type DustRegion = CurveRegion & {
   dragPerSecond: number;
 };
 
+export type PlanetAppearance = "rocky";
+
+export type PlanetDefinition = {
+  id: string;
+  center: Point;
+  radius: number;
+  gravitationalParameter: number;
+  appearance?: PlanetAppearance;
+};
+
 export type LevelDefinition = {
   id: string;
   name: string;
@@ -68,6 +78,7 @@ export type LevelDefinition = {
   goalMotion?: HazardMotion;
   hazards: HazardRegion[];
   hazardMotion?: HazardMotion;
+  planets?: PlanetDefinition[];
   dustRegions: DustRegion[];
   dustMotion?: HazardMotion;
   maxBombs: number;

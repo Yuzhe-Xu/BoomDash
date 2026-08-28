@@ -31,6 +31,23 @@ export function integrateShip(ship: Ship, dt: number): Ship {
   };
 }
 
+export function applyAcceleration(
+  ship: Ship,
+  acceleration: { x: number; y: number },
+  dt: number,
+): Ship {
+  if (dt <= 0) {
+    return ship;
+  }
+  return {
+    ...ship,
+    velocity: {
+      x: ship.velocity.x + acceleration.x * dt,
+      y: ship.velocity.y + acceleration.y * dt,
+    },
+  };
+}
+
 export function applyDrag(ship: Ship, dragPerSecond: number, dt: number): Ship {
   if (dragPerSecond <= 0 || dt <= 0) {
     return ship;
