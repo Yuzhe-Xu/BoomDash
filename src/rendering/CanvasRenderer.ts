@@ -86,7 +86,7 @@ export class CanvasRenderer {
     }
     const goalColor = state.phase === "success" ? "#9dffc4" : "#5dff9a";
     const goalBright = state.phase === "success";
-    for (const region of level.goals) {
+    for (const region of regionsAtTime(level.goals, level.goalMotion, state.elapsed)) {
       this.drawGoalRegion(region, goalColor, goalBright, level.worldHeight);
     }
     for (const region of hazardsAtTime(level.hazards, level.hazardMotion, state.elapsed)) {
@@ -371,7 +371,7 @@ export class CanvasRenderer {
     const { ctx } = this;
     ctx.save();
     ctx.fillStyle = "rgba(255, 176, 32, 0.14)";
-    for (const region of level.goals) {
+    for (const region of regionsAtTime(level.goals, level.goalMotion, elapsed)) {
       ctx.beginPath();
       traceGoalRegion(ctx, region, LOGICAL_WIDTH, level.worldHeight);
       ctx.fill();

@@ -1,7 +1,7 @@
 import type { RunState } from "../simulation/GameState";
 import { remainingBombs } from "../simulation/ShipSimulator";
 import { flightProgress } from "../simulation/LifecycleBounds";
-import { referenceGoalY } from "../level/GoalGeometry";
+import { referenceGoalY, regionsAtTime } from "../level/GoalGeometry";
 import { LOGICAL_WIDTH, type LevelDefinition } from "../level/LevelDefinition";
 
 export const COUNTDOWN_WARN_SECONDS = 3;
@@ -43,7 +43,11 @@ export class Hud {
       flightProgress(
         state.ship.position.y,
         level.start.cy,
-        referenceGoalY(level.goals, LOGICAL_WIDTH, level.worldHeight),
+        referenceGoalY(
+          regionsAtTime(level.goals, level.goalMotion, state.elapsed),
+          LOGICAL_WIDTH,
+          level.worldHeight,
+        ),
       ) * 100,
     );
     const remaining = remainingTime(state.elapsed, level.timeLimit);

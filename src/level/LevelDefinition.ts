@@ -65,6 +65,7 @@ export type LevelDefinition = {
   worldHeight: number;
   start: ZoneDefinition;
   goals: GoalRegion[];
+  goalMotion?: HazardMotion;
   hazards: HazardRegion[];
   hazardMotion?: HazardMotion;
   dustRegions: DustRegion[];

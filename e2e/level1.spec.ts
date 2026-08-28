@@ -177,7 +177,8 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
   await expect(page.getByRole("button", { name: /SECTOR 27/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 28/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 29/ })).toBeEnabled();
-  await expect(page.locator(".sector-option")).toHaveCount(29);
+  await expect(page.getByRole("button", { name: /SECTOR 30/ })).toBeEnabled();
+  await expect(page.locator(".sector-option")).toHaveCount(30);
 
   const sectorList = page.locator("#sector-list");
   await expect(sectorList).toHaveCSS("overflow-y", "auto");
@@ -272,8 +273,8 @@ test("renders sector twenty-six's center goal and asteroid rings", async ({ page
   expect(pixels.hazard).toBeGreaterThan(100);
 });
 
-test("renders sectors twenty-eight and twenty-nine's hazards and dust", async ({ page }) => {
-  for (const sector of [28, 29]) {
+test("renders sectors twenty-eight through thirty's dynamic regions", async ({ page }) => {
+  for (const sector of [28, 29, 30]) {
     await page.goto("/?debug=1&unlimited=0");
     await page.getByRole("button", { name: "SECTORS" }).click();
     await page.getByRole("button", { name: new RegExp(`SECTOR ${sector}`) }).click();

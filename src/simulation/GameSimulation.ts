@@ -92,10 +92,11 @@ export class GameSimulation {
     );
     this.state.ship = integrateShip(this.state.ship, dt);
     this.state.effects = ageEffects(this.state.effects, dt);
+    const goals = regionsAtTime(this.level.goals, this.level.goalMotion, this.state.elapsed);
 
     const result = evaluateLifecycle(
       this.state.ship,
-      this.level.goals,
+      goals,
       this.state.elapsed,
       this.level.timeLimit,
       this.level.worldHeight,
@@ -106,7 +107,7 @@ export class GameSimulation {
       this.state.phase = "success";
       this.state.successGoalId = enteredGoal(
         this.state.ship,
-        this.level.goals,
+        goals,
         this.level.worldHeight,
       )?.id ?? null;
       this.state.ship.velocity = { x: 0, y: 0 };

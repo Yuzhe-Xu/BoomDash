@@ -20,6 +20,7 @@ import {
   level29HazardMotion,
   level29MovingAsteroid,
 } from "../src/level/level29";
+import { level30 } from "../src/level/level30";
 import { GameSimulation } from "../src/simulation/GameSimulation";
 import { isInsideAnyGoal } from "../src/simulation/LifecycleBounds";
 import { FIXED_DT } from "../src/simulation/ShipSimulator";
@@ -30,7 +31,7 @@ describe("levels 28-29 catalog and motion geometry", () => {
     expect(findLevel(level29.id)).toBe(level29);
     expect(nextLevel(level27.id)).toBe(level28);
     expect(nextLevel(level28.id)).toBe(level29);
-    expect(nextLevel(level29.id)).toBeUndefined();
+    expect(nextLevel(level29.id)).toBe(level30);
   });
 
   it("combines three rotating asteroids with four rotating outer dust segments", () => {
