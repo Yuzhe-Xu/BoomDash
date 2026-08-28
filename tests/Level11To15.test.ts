@@ -52,6 +52,7 @@ const levelIds = [
   "level-32",
   "level-33",
   "level-34",
+  "level-35",
 ];
 
 describe("levels 11-15 catalog", () => {

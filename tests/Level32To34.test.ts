@@ -11,6 +11,7 @@ import {
   level33UpperPlanet,
 } from "../src/level/level33";
 import { level34, level34Planet } from "../src/level/level34";
+import { level35 } from "../src/level/level35";
 import { GameSimulation } from "../src/simulation/GameSimulation";
 import { shipHitsAnyPlanet } from "../src/simulation/GravitySystem";
 import { isInsideAnyGoal } from "../src/simulation/LifecycleBounds";
@@ -24,7 +25,7 @@ describe("levels 32-34 catalog and geometry", () => {
     expect(nextLevel(level31.id)).toBe(level32);
     expect(nextLevel(level32.id)).toBe(level33);
     expect(nextLevel(level33.id)).toBe(level34);
-    expect(nextLevel(level34.id)).toBeUndefined();
+    expect(nextLevel(level34.id)).toBe(level35);
   });
 
   it("uses a right-side planet to guard sector thirty-two's corner goal", () => {

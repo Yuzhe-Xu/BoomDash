@@ -48,6 +48,7 @@ describe("level 5 catalog", () => {
       "level-32",
       "level-33",
       "level-34",
+      "level-35",
     ]);
     expect(findLevel("level-5")).toBe(level5);
     expect(nextLevel(level4.id)).toBe(level5);
