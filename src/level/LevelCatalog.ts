@@ -14,6 +14,7 @@ import { level12 } from "./level12";
 import { level13 } from "./level13";
 import { level14 } from "./level14";
 import { level15 } from "./level15";
+import { level16 } from "./level16";
 
 export const levels: LevelDefinition[] = [
   level1,
@@ -31,6 +32,7 @@ export const levels: LevelDefinition[] = [
   level13,
   level14,
   level15,
+  level16,
 ];
 
 export function findLevel(id: string): LevelDefinition | undefined {

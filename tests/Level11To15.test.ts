@@ -33,6 +33,7 @@ const levelIds = [
   "level-13",
   "level-14",
   "level-15",
+  "level-16",
 ];
 
 describe("levels 11-15 catalog", () => {
@@ -41,7 +42,7 @@ describe("levels 11-15 catalog", () => {
     expect(findLevel(level15.id)).toBe(level15);
     expect(nextLevel(level10.id)).toBe(level11);
     expect(nextLevel(level14.id)).toBe(level15);
-    expect(nextLevel(level15.id)).toBeUndefined();
+    expect(nextLevel(level15.id)?.id).toBe("level-16");
   });
 
   it("uses progressively longer maps and only existing geometry", () => {
