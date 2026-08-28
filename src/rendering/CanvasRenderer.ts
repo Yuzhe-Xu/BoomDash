@@ -4,7 +4,7 @@ import {
   traceGoalCurve,
   traceGoalRegion,
 } from "../level/GoalGeometry";
-import type { GoalRegion, HazardRegion, LevelDefinition } from "../level/LevelDefinition";
+import type { DustRegion, GoalRegion, HazardRegion, LevelDefinition } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import type { Bomb, RunState } from "../simulation/GameState";
 import { lerp } from "../simulation/Vec2";
@@ -79,6 +79,9 @@ export class CanvasRenderer {
     this.drawBackdrop(cameraY, level.worldHeight);
     ctx.save();
     ctx.translate(0, -cameraY);
+    for (const region of level.dustRegions) {
+      this.drawDustRegion(region, level.worldHeight);
+    }
     const goalColor = state.phase === "success" ? "#9dffc4" : "#5dff9a";
     const goalBright = state.phase === "success";
     for (const region of level.goals) {
@@ -291,6 +294,44 @@ export class CanvasRenderer {
     ctx.restore();
   }
 
+  private drawDustRegion(region: DustRegion, worldHeight: number): void {
+    const { ctx } = this;
+    const polygon = goalPolygon(region, LOGICAL_WIDTH, worldHeight);
+    const minX = Math.min(...polygon.map((point) => point.x));
+    const maxX = Math.max(...polygon.map((point) => point.x));
+    const minY = Math.min(...polygon.map((point) => point.y));
+    const maxY = Math.max(...polygon.map((point) => point.y));
+
+    ctx.save();
+    ctx.beginPath();
+    traceGoalRegion(ctx, region, LOGICAL_WIDTH, worldHeight);
+    ctx.fillStyle = "rgba(154, 164, 174, 0.16)";
+    ctx.fill();
+    ctx.clip();
+    ctx.fillStyle = "rgba(211, 218, 224, 0.5)";
+    let row = 0;
+    for (let y = minY + 9; y < maxY; y += 17) {
+      const offset = (row * 9) % 18;
+      for (let x = minX + 9 + offset; x < maxX; x += 22) {
+        if (pointInPolygon(x, y, polygon)) {
+          ctx.fillRect(x, y, 1.5, 1.5);
+        }
+      }
+      row += 1;
+    }
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    traceGoalRegion(ctx, region, LOGICAL_WIDTH, worldHeight);
+    ctx.strokeStyle = "rgba(190, 200, 210, 0.82)";
+    ctx.lineWidth = 2;
+    ctx.shadowColor = "rgba(175, 185, 195, 0.55)";
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+    ctx.restore();
+  }
+
   private drawShip(x: number, y: number, vx: number, vy: number, phase: RunState["phase"]): void {
     const { ctx } = this;
     const flying = phase === "flying" || phase === "success";
@@ -335,6 +376,12 @@ export class CanvasRenderer {
     }
     ctx.fillStyle = "rgba(255, 77, 109, 0.2)";
     for (const region of level.hazards) {
+      ctx.beginPath();
+      traceGoalRegion(ctx, region, LOGICAL_WIDTH, level.worldHeight);
+      ctx.fill();
+    }
+    ctx.fillStyle = "rgba(190, 200, 210, 0.28)";
+    for (const region of level.dustRegions) {
       ctx.beginPath();
       traceGoalRegion(ctx, region, LOGICAL_WIDTH, level.worldHeight);
       ctx.fill();

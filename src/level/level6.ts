@@ -28,6 +28,7 @@ export const level6: LevelDefinition = {
   },
   goals: [topClosedCircularArc("goal-top", 70, 320, 92)],
   hazards: [level6AsteroidBelt],
+  dustRegions: [],
   maxBombs: 5,
   unlimitedBombs: false,
   blastRadius: 110,

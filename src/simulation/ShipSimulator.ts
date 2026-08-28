@@ -31,6 +31,20 @@ export function integrateShip(ship: Ship, dt: number): Ship {
   };
 }
 
+export function applyDrag(ship: Ship, dragPerSecond: number, dt: number): Ship {
+  if (dragPerSecond <= 0 || dt <= 0) {
+    return ship;
+  }
+  const multiplier = Math.exp(-dragPerSecond * dt);
+  return {
+    ...ship,
+    velocity: {
+      x: ship.velocity.x * multiplier,
+      y: ship.velocity.y * multiplier,
+    },
+  };
+}
+
 export function detonateBomb(
   state: RunState,
   bombId: string,

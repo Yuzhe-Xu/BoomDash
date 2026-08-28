@@ -43,6 +43,7 @@ export const level15: LevelDefinition = {
   },
   goals: [circleRegion("goal-mid-left", 100, 400, 48)],
   hazards: [level15GoalAsteroidBottom, level15GoalAsteroidLeft, level15GoalAsteroidRight],
+  dustRegions: [],
   maxBombs: 8,
   unlimitedBombs: false,
   blastRadius: 110,

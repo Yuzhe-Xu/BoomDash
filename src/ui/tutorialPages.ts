@@ -3,9 +3,10 @@ import { level2 } from "../level/level2";
 import { level4 } from "../level/level4";
 import { level6 } from "../level/level6";
 import { level9 } from "../level/level9";
+import { level21 } from "../level/level21";
 
 export type TutorialPage = {
-  id: "goal" | "deploy" | "flight" | "scroll" | "score" | "asteroid" | "bonus";
+  id: "goal" | "deploy" | "flight" | "scroll" | "score" | "asteroid" | "bonus" | "dust";
   kicker: string;
   title: string;
   copy: string;
@@ -68,12 +69,22 @@ export const LEVEL9_TUTORIAL_PAGES: TutorialPage[] = [
   },
 ];
 
+export const LEVEL21_TUTORIAL_PAGES: TutorialPage[] = [
+  {
+    id: "dust",
+    kicker: "DRAG FIELD",
+    title: "星际尘埃",
+    copy: "飞船进入灰色尘埃区域后会持续减速。预留炸弹，在尘埃中补充速度。",
+  },
+];
+
 const TUTORIALS_BY_LEVEL: Record<string, TutorialPage[]> = {
   [level1.id]: LEVEL1_TUTORIAL_PAGES,
   [level2.id]: LEVEL2_TUTORIAL_PAGES,
   [level4.id]: LEVEL4_TUTORIAL_PAGES,
   [level6.id]: LEVEL6_TUTORIAL_PAGES,
   [level9.id]: LEVEL9_TUTORIAL_PAGES,
+  [level21.id]: LEVEL21_TUTORIAL_PAGES,
 };
 
 export function tutorialPagesFor(levelId: string): TutorialPage[] {

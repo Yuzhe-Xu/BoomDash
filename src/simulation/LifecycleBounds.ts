@@ -1,5 +1,5 @@
 import { circleHitsGoalRegion, distanceToPolygon, goalPolygon } from "../level/GoalGeometry";
-import type { GoalRegion, HazardRegion } from "../level/LevelDefinition";
+import type { CurveRegion, DustRegion, GoalRegion, HazardRegion } from "../level/LevelDefinition";
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from "../level/LevelDefinition";
 import type { FailReason } from "../app/GamePhase";
 import type { Ship } from "./GameState";
@@ -10,9 +10,9 @@ export type LifecycleResult =
   | { kind: "success" }
   | { kind: "failed"; reason: FailReason };
 
-export function isInsideGoal(
+export function shipTouchesRegion(
   ship: Ship,
-  region: GoalRegion,
+  region: CurveRegion,
   worldHeight = LOGICAL_HEIGHT,
 ): boolean {
   return circleHitsGoalRegion(
@@ -23,6 +23,14 @@ export function isInsideGoal(
     LOGICAL_WIDTH,
     worldHeight,
   );
+}
+
+export function isInsideGoal(
+  ship: Ship,
+  region: GoalRegion,
+  worldHeight = LOGICAL_HEIGHT,
+): boolean {
+  return shipTouchesRegion(ship, region, worldHeight);
 }
 
 export function isInsideAnyGoal(
@@ -46,15 +54,17 @@ export function isInsideAnyHazard(
   hazards: HazardRegion[],
   worldHeight = LOGICAL_HEIGHT,
 ): boolean {
-  return hazards.some((region) =>
-    circleHitsGoalRegion(
-      ship.position.x,
-      ship.position.y,
-      ship.radius,
-      region,
-      LOGICAL_WIDTH,
-      worldHeight,
-    ),
+  return hazards.some((region) => shipTouchesRegion(ship, region, worldHeight));
+}
+
+export function dustDragAtShip(
+  ship: Ship,
+  dustRegions: DustRegion[],
+  worldHeight = LOGICAL_HEIGHT,
+): number {
+  return dustRegions.reduce(
+    (drag, region) => drag + (shipTouchesRegion(ship, region, worldHeight) ? region.dragPerSecond : 0),
+    0,
   );
 }
 

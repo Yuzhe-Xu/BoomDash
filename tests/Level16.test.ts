@@ -9,6 +9,7 @@ import {
   level16RightAsteroid,
   level16TopAsteroid,
 } from "../src/level/level16";
+import { level17 } from "../src/level/level17";
 import { GameSimulation } from "../src/simulation/GameSimulation";
 import { isInsideAnyGoal, isInsideAnyHazard } from "../src/simulation/LifecycleBounds";
 import { FIXED_DT } from "../src/simulation/ShipSimulator";
@@ -17,7 +18,7 @@ describe("level 16 catalog and geometry", () => {
   it("is appended after sector fifteen and remains directly playable", () => {
     expect(findLevel(level16.id)).toBe(level16);
     expect(nextLevel(level15.id)).toBe(level16);
-    expect(nextLevel(level16.id)).toBeUndefined();
+    expect(nextLevel(level16.id)).toBe(level17);
   });
 
   it("builds the sketched left-entry enclosure from regular rounded rectangles", () => {

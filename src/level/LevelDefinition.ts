@@ -44,6 +44,9 @@ export type GoalRegion = CurveRegion & {
   bonusScore?: number;
 };
 export type HazardRegion = CurveRegion;
+export type DustRegion = CurveRegion & {
+  dragPerSecond: number;
+};
 
 export type LevelDefinition = {
   id: string;
@@ -52,6 +55,7 @@ export type LevelDefinition = {
   start: ZoneDefinition;
   goals: GoalRegion[];
   hazards: HazardRegion[];
+  dustRegions: DustRegion[];
   maxBombs: number;
   unlimitedBombs: boolean;
   blastRadius: number;

@@ -23,6 +23,7 @@ export const level8: LevelDefinition = {
   },
   goals: [cornerQuarterCircle("goal-top-right", "top-right", 120)],
   hazards: [level8GoalAsteroid],
+  dustRegions: [],
   maxBombs: 5,
   unlimitedBombs: false,
   blastRadius: 110,

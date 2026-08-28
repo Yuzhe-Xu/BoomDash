@@ -39,6 +39,7 @@ export const level12: LevelDefinition = {
   },
   goals: [circleRegion("goal-center", 195, 120, 44)],
   hazards: [level12LowerAsteroid, level12MidAsteroid, level12UpperAsteroid],
+  dustRegions: [],
   maxBombs: 8,
   unlimitedBombs: false,
   blastRadius: 110,

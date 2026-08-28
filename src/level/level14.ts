@@ -38,6 +38,7 @@ export const level14: LevelDefinition = {
     { ...circleRegion("goal-right-bonus", 320, 760, 50), bonusScore: LEVEL14_RIGHT_BONUS },
   ],
   hazards: [level14CenterAsteroid, level14BonusAsteroid],
+  dustRegions: [],
   maxBombs: 8,
   unlimitedBombs: false,
   blastRadius: 110,

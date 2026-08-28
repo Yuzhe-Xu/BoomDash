@@ -17,6 +17,7 @@ export const level3: LevelDefinition = {
     cornerQuarterCircle("goal-right", "top-right", 78),
   ],
   hazards: [],
+  dustRegions: [],
   maxBombs: 5,
   unlimitedBombs: false,
   blastRadius: 110,

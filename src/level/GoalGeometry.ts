@@ -86,6 +86,74 @@ export function cornerQuarterCircle(
   };
 }
 
+export function cornerQuarterRing(
+  id: string,
+  corner: "top-left" | "top-right",
+  innerRadius: number,
+  outerRadius: number,
+  worldWidth = LOGICAL_WIDTH,
+): GoalRegion {
+  if (innerRadius <= 0 || outerRadius <= innerRadius) {
+    throw new Error("Quarter ring radii must satisfy 0 < innerRadius < outerRadius");
+  }
+  if (corner === "top-left") {
+    return {
+      id,
+      start: { x: outerRadius, y: 0 },
+      curve: [
+        {
+          kind: "arc",
+          cx: 0,
+          cy: 0,
+          radius: outerRadius,
+          startAngle: 0,
+          endAngle: Math.PI / 2,
+          to: { x: 0, y: outerRadius },
+        },
+        { kind: "line", to: { x: 0, y: innerRadius } },
+        {
+          kind: "arc",
+          cx: 0,
+          cy: 0,
+          radius: innerRadius,
+          startAngle: Math.PI / 2,
+          endAngle: 0,
+          counterclockwise: true,
+          to: { x: innerRadius, y: 0 },
+        },
+      ],
+      closeEdges: [],
+    };
+  }
+  return {
+    id,
+    start: { x: worldWidth - outerRadius, y: 0 },
+    curve: [
+      {
+        kind: "arc",
+        cx: worldWidth,
+        cy: 0,
+        radius: outerRadius,
+        startAngle: Math.PI,
+        endAngle: Math.PI / 2,
+        counterclockwise: true,
+        to: { x: worldWidth, y: outerRadius },
+      },
+      { kind: "line", to: { x: worldWidth, y: innerRadius } },
+      {
+        kind: "arc",
+        cx: worldWidth,
+        cy: 0,
+        radius: innerRadius,
+        startAngle: Math.PI / 2,
+        endAngle: Math.PI,
+        to: { x: worldWidth - innerRadius, y: 0 },
+      },
+    ],
+    closeEdges: [],
+  };
+}
+
 export function circleRegion(id: string, cx: number, cy: number, radius: number): GoalRegion {
   return {
     id,

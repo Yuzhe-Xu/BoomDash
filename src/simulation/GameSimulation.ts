@@ -1,10 +1,11 @@
 import type { GameEvent, RecordedInput } from "../app/GameEvents";
 import { isSimulating } from "../app/GamePhase";
 import { clampToCanvas, type LevelDefinition } from "../level/LevelDefinition";
-import { enteredGoal, evaluateLifecycle } from "./LifecycleBounds";
+import { dustDragAtShip, enteredGoal, evaluateLifecycle } from "./LifecycleBounds";
 import { createInitialState, resetShip, type RunState } from "./GameState";
 import {
   ageEffects,
+  applyDrag,
   detonateBomb,
   integrateShip,
   launchShip,
@@ -79,6 +80,11 @@ export class GameSimulation {
 
     this.state.tick += 1;
     this.state.elapsed += dt;
+    this.state.ship = applyDrag(
+      this.state.ship,
+      dustDragAtShip(this.state.ship, this.level.dustRegions, this.level.worldHeight),
+      dt,
+    );
     this.state.ship = integrateShip(this.state.ship, dt);
     this.state.effects = ageEffects(this.state.effects, dt);
 

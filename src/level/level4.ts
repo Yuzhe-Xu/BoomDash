@@ -14,6 +14,7 @@ export const level4: LevelDefinition = {
   },
   goals: [topClosedCircularArc("goal-top-left", 40, 123, 31)],
   hazards: [],
+  dustRegions: [],
   maxBombs: 5,
   unlimitedBombs: false,
   blastRadius: 110,

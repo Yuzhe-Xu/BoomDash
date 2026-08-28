@@ -34,6 +34,7 @@ export const level13: LevelDefinition = {
   },
   goals: [topClosedCircularArc("goal-top-right", 250, 360, 110)],
   hazards: [level13LowerAsteroid, level13UpperAsteroid],
+  dustRegions: [],
   maxBombs: 8,
   unlimitedBombs: false,
   blastRadius: 110,

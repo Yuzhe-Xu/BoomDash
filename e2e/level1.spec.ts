@@ -98,6 +98,22 @@ test("shows a one-page bonus-goal tutorial before sector nine", async ({ page })
   await expect(page.locator("#level-tag")).toHaveText("SECTOR 09");
 });
 
+test("shows a one-page interstellar-dust tutorial before sector twenty-one", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "SECTORS" }).click();
+  await page.getByRole("button", { name: /SECTOR 21/ }).click();
+
+  await expect(page.locator("#tutorial")).toBeVisible();
+  await expect(page.locator("#tutorial-title")).toHaveText("星际尘埃");
+  await expect(page.locator(".anim-dust")).toBeVisible();
+  await expect(page.locator("#tutorial-copy")).toContainText("持续减速");
+  await expect(page.getByRole("button", { name: "BEGIN" })).toBeVisible();
+
+  await page.getByRole("button", { name: "BEGIN" }).click();
+  await expect(page.locator("#tutorial")).toBeHidden();
+  await expect(page.locator("#level-tag")).toHaveText("SECTOR 21");
+});
+
 test("loads the first sector and can place a bomb then launch", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#start-screen")).toBeVisible();
@@ -148,6 +164,13 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
   await expect(page.getByRole("button", { name: /SECTOR 14/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 15/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 16/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 17/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 18/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 19/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 20/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 21/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 22/ })).toBeEnabled();
+  await expect(page.locator(".sector-option")).toHaveCount(22);
 
   const sectorList = page.locator("#sector-list");
   await expect(sectorList).toHaveCSS("overflow-y", "auto");

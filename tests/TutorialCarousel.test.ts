@@ -9,12 +9,16 @@ import { level7 } from "../src/level/level7";
 import { level8 } from "../src/level/level8";
 import { level9 } from "../src/level/level9";
 import { level10 } from "../src/level/level10";
+import { level20 } from "../src/level/level20";
+import { level21 } from "../src/level/level21";
+import { level22 } from "../src/level/level22";
 import {
   LEVEL1_TUTORIAL_PAGES,
   LEVEL2_TUTORIAL_PAGES,
   LEVEL4_TUTORIAL_PAGES,
   LEVEL6_TUTORIAL_PAGES,
   LEVEL9_TUTORIAL_PAGES,
+  LEVEL21_TUTORIAL_PAGES,
   clampTutorialPage,
   isFirstTutorialPage,
   isLastTutorialPage,
@@ -62,6 +66,14 @@ describe("tutorialPages", () => {
     expect(tutorialPagesFor(level9.id)).toEqual(LEVEL9_TUTORIAL_PAGES);
   });
 
+  it("defines one dust-drag page for sector twenty-one", () => {
+    expect(LEVEL21_TUTORIAL_PAGES).toHaveLength(1);
+    expect(LEVEL21_TUTORIAL_PAGES[0]?.id).toBe("dust");
+    expect(LEVEL21_TUTORIAL_PAGES[0]?.copy).toContain("持续减速");
+    expect(LEVEL21_TUTORIAL_PAGES[0]?.copy).toContain("补充速度");
+    expect(tutorialPagesFor(level21.id)).toEqual(LEVEL21_TUTORIAL_PAGES);
+  });
+
   it("appears before sectors that have briefing pages", () => {
     expect(shouldShowTutorial(level1.id)).toBe(true);
     expect(shouldShowTutorial(level2.id)).toBe(true);
@@ -73,6 +85,9 @@ describe("tutorialPages", () => {
     expect(shouldShowTutorial(level8.id)).toBe(false);
     expect(shouldShowTutorial(level9.id)).toBe(true);
     expect(shouldShowTutorial(level10.id)).toBe(false);
+    expect(shouldShowTutorial(level20.id)).toBe(false);
+    expect(shouldShowTutorial(level21.id)).toBe(true);
+    expect(shouldShowTutorial(level22.id)).toBe(false);
     expect(shouldShowTutorial("missing")).toBe(false);
   });
 

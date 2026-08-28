@@ -24,6 +24,7 @@ export const level5: LevelDefinition = {
     ),
   ],
   hazards: [],
+  dustRegions: [],
   maxBombs: 5,
   unlimitedBombs: false,
   blastRadius: 110,

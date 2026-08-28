@@ -57,6 +57,7 @@ export const level16: LevelDefinition = {
     level16TopAsteroid,
     level16RightAsteroid,
   ],
+  dustRegions: [],
   maxBombs: 8,
   unlimitedBombs: false,
   blastRadius: 110,
