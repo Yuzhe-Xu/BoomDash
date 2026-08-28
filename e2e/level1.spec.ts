@@ -170,7 +170,10 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
   await expect(page.getByRole("button", { name: /SECTOR 20/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 21/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 22/ })).toBeEnabled();
-  await expect(page.locator(".sector-option")).toHaveCount(22);
+  await expect(page.getByRole("button", { name: /SECTOR 23/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 24/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 25/ })).toBeEnabled();
+  await expect(page.locator(".sector-option")).toHaveCount(25);
 
   const sectorList = page.locator("#sector-list");
   await expect(sectorList).toHaveCSS("overflow-y", "auto");

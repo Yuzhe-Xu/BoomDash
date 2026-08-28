@@ -4,6 +4,7 @@ import { findLevel, nextLevel } from "../src/level/LevelCatalog";
 import { level20 } from "../src/level/level20";
 import { level21, level21DustBelt } from "../src/level/level21";
 import { level22, level22DustRings } from "../src/level/level22";
+import { level23 } from "../src/level/level23";
 import type { LevelDefinition } from "../src/level/LevelDefinition";
 import { GameSimulation } from "../src/simulation/GameSimulation";
 import { isInsideAnyGoal, shipTouchesRegion } from "../src/simulation/LifecycleBounds";
@@ -15,7 +16,7 @@ describe("levels 21-22 catalog and geometry", () => {
     expect(findLevel(level22.id)).toBe(level22);
     expect(nextLevel(level20.id)).toBe(level21);
     expect(nextLevel(level21.id)).toBe(level22);
-    expect(nextLevel(level22.id)).toBeUndefined();
+    expect(nextLevel(level22.id)).toBe(level23);
   });
 
   it("places sector twenty-one's rounded dust belt between spawn and goal", () => {
