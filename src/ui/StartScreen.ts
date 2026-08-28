@@ -73,6 +73,7 @@ export class StartScreen {
     this.root.hidden = false;
     this.home.hidden = true;
     this.selector.hidden = false;
+    this.list.scrollTop = 0;
   }
 
   hide(): void {

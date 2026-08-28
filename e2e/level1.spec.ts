@@ -142,6 +142,48 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
   await expect(page.getByRole("button", { name: /SECTOR 08/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 09/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 10/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 11/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 12/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 13/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 14/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 15/ })).toBeEnabled();
+
+  const sectorList = page.locator("#sector-list");
+  await expect(sectorList).toHaveCSS("overflow-y", "auto");
+  const initialScroll = await sectorList.evaluate((element) => ({
+    top: element.scrollTop,
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+  }));
+  expect(initialScroll.scrollHeight).toBeGreaterThan(initialScroll.clientHeight);
+  await sectorList.hover();
+  await page.mouse.wheel(0, 360);
+  await expect.poll(() => sectorList.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+  await sectorList.evaluate((element) => {
+    element.scrollTop = 0;
+  });
+
+  const listBox = await sectorList.boundingBox();
+  expect(listBox).toBeTruthy();
+  const cdp = await page.context().newCDPSession(page);
+  const touchX = listBox!.x + listBox!.width * 0.5;
+  const touchStartY = listBox!.y + listBox!.height * 0.76;
+  const touchEndY = listBox!.y + listBox!.height * 0.24;
+  await cdp.send("Input.dispatchTouchEvent", {
+    type: "touchStart",
+    touchPoints: [{ x: touchX, y: touchStartY, id: 1 }],
+  });
+  for (let step = 1; step <= 8; step += 1) {
+    await cdp.send("Input.dispatchTouchEvent", {
+      type: "touchMove",
+      touchPoints: [{ x: touchX, y: touchStartY + ((touchEndY - touchStartY) * step) / 8, id: 1 }],
+    });
+  }
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await expect.poll(() => sectorList.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+  await sectorList.evaluate((element) => {
+    element.scrollTop = 0;
+  });
 
   await page.getByRole("button", { name: /SECTOR 02/ }).click();
   await expect(page.locator("#tutorial")).toBeVisible();

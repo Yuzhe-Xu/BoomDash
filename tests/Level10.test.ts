@@ -24,10 +24,16 @@ describe("level 10 catalog", () => {
       "level-8",
       "level-9",
       "level-10",
+      "level-11",
+      "level-12",
+      "level-13",
+      "level-14",
+      "level-15",
     ]);
     expect(findLevel(level10.id)).toBe(level10);
     expect(nextLevel(level9.id)).toBe(level10);
-    expect(nextLevel(level10.id)).toBeUndefined();
+    expect(nextLevel(level10.id)).toBeDefined();
+    expect(nextLevel(level10.id)?.id).toBe("level-11");
   });
 
   it("uses a long map with staggered belts and a small right-biased top goal", () => {

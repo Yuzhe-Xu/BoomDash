@@ -263,7 +263,7 @@ button.active,
 }
 
 .start-panel {
-  width: min(100%, 320px);
+  width: min(100%, 340px);
 }
 
 .start-panel h1 {
@@ -276,34 +276,56 @@ button.active,
 
 .sector-list {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   margin: 0 0 12px;
+  max-height: 390px;
+  padding: 1px 5px 1px 1px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: rgba(61, 240, 255, 0.52) rgba(61, 240, 255, 0.08);
+  scrollbar-width: thin;
+  touch-action: pan-y;
 }
 
 .sector-option {
-  display: flex;
+  display: grid;
   align-items: center;
-  justify-content: space-between;
+  justify-items: center;
+  align-content: center;
+  gap: 8px;
   width: 100%;
-  min-height: 52px;
-  padding: 0 12px;
-  text-align: left;
+  min-width: 0;
+  min-height: 0;
+  aspect-ratio: 1;
+  padding: 8px 4px;
+  text-align: center;
 }
 
 .sector-name {
   color: var(--cyan);
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  line-height: 1.25;
+  letter-spacing: 0;
 }
 
 .sector-progress {
   display: grid;
-  justify-items: end;
-  gap: 4px;
+  justify-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 
 .sector-best {
   color: var(--muted);
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 9px;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .star-row {
