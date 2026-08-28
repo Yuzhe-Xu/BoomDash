@@ -1,4 +1,5 @@
 import type { PlanetDefinition } from "../level/LevelDefinition";
+import { planetSpinAngle } from "./planetSpin";
 
 const TEXTURE_SIZE = 256;
 const cache = new Map<string, HTMLCanvasElement>();
@@ -6,16 +7,39 @@ const cache = new Map<string, HTMLCanvasElement>();
 export function drawPlanet(
   ctx: CanvasRenderingContext2D,
   planet: PlanetDefinition,
+  elapsed = 0,
   debug = false,
 ): void {
   const { x, y } = planet.center;
   const radius = Math.max(1, planet.radius);
-  const texture = rockyTexture();
+  const texture = rockyAlbedo();
   ctx.save();
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, Math.PI * 2);
   ctx.clip();
-  ctx.drawImage(texture, x - radius, y - radius, radius * 2, radius * 2);
+  ctx.translate(x, y);
+  ctx.rotate(planetSpinAngle(planet, elapsed));
+  ctx.drawImage(texture, -radius, -radius, radius * 2, radius * 2);
+  ctx.restore();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.clip();
+  const light = ctx.createRadialGradient(
+    x - radius * 0.38,
+    y - radius * 0.52,
+    radius * 0.12,
+    x,
+    y,
+    radius,
+  );
+  light.addColorStop(0, "rgba(255, 224, 186, 0.28)");
+  light.addColorStop(0.42, "rgba(0, 0, 0, 0)");
+  light.addColorStop(0.78, "rgba(10, 6, 8, 0.38)");
+  light.addColorStop(1, "rgba(4, 2, 6, 0.78)");
+  ctx.fillStyle = light;
+  ctx.fill();
   ctx.restore();
 
   ctx.save();
@@ -37,7 +61,7 @@ export function drawPlanet(
   }
 }
 
-function rockyTexture(): HTMLCanvasElement {
+function rockyAlbedo(): HTMLCanvasElement {
   const cached = cache.get("rocky");
   if (cached) {
     return cached;
@@ -52,12 +76,7 @@ function rockyTexture(): HTMLCanvasElement {
   }
   const image = ctx.createImageData(TEXTURE_SIZE, TEXTURE_SIZE);
   const data = image.data;
-  const light = { x: -0.42, y: -0.58, z: 0.7 };
-  const lightLen = Math.hypot(light.x, light.y, light.z);
-  light.x /= lightLen;
-  light.y /= lightLen;
-  light.z /= lightLen;
-  const craters = createCraters(28);
+  const craters = createCraters(6);
 
   for (let py = 0; py < TEXTURE_SIZE; py += 1) {
     for (let px = 0; px < TEXTURE_SIZE; px += 1) {
@@ -69,23 +88,13 @@ function rockyTexture(): HTMLCanvasElement {
         data[index + 3] = 0;
         continue;
       }
-      const nz = Math.sqrt(Math.max(0, 1 - rSq));
-      const height = fbm(nx * 2.4 + 8.1, ny * 2.4 + 3.7, 5);
+      const height = fbm(nx * 1.6 + 8.1, ny * 1.6 + 3.7, 3);
       const crater = sampleCraters(nx, ny, craters);
-      const highland = clamp01(height * 0.72 + 0.28 - crater.depth * 0.85);
-      const rust = 0.55 + fbm(nx * 5.1 + 20, ny * 5.1 - 11, 3) * 0.45;
-      const red = 86 + highland * 118 + rust * 28 - crater.rim * 18;
-      const green = 58 + highland * 78 + rust * 8 - crater.depth * 22;
-      const blue = 42 + highland * 48 - crater.depth * 16;
-      const ndotl = Math.max(0, nx * light.x + ny * light.y + nz * light.z);
-      const ambient = 0.07;
-      const shade = ambient + ndotl * 0.93;
-      const terminator = Math.pow(ndotl, 0.72);
-      const lit = shade * (0.55 + terminator * 0.45);
-      const rim = Math.pow(1 - nz, 2.4);
-      data[index] = clampByte(red * lit + rim * 48);
-      data[index + 1] = clampByte(green * lit + rim * 22);
-      data[index + 2] = clampByte(blue * lit + rim * 10);
+      const highland = clamp01(height * 0.55 + 0.4 - crater.depth * 0.7);
+      const rust = 0.55 + fbm(nx * 2.2 + 20, ny * 2.2 - 11, 2) * 0.35;
+      data[index] = clampByte(118 + highland * 102 + rust * 36 - crater.rim * 18);
+      data[index + 1] = clampByte(78 + highland * 70 + rust * 10 - crater.depth * 22);
+      data[index + 2] = clampByte(54 + highland * 42 - crater.depth * 16);
       data[index + 3] = 255;
     }
   }
@@ -109,7 +118,7 @@ function createCraters(count: number): Crater[] {
     craters.push({
       x: Math.cos(angle) * dist,
       y: Math.sin(angle) * dist,
-      radius: 0.045 + rand() * 0.16,
+      radius: 0.1 + rand() * 0.12,
     });
   }
   return craters;

@@ -1,3 +1,4 @@
+import { isFrozen } from "../app/GamePhase";
 import {
   goalPolygon,
   hazardsAtTime,
@@ -21,6 +22,7 @@ export class CanvasRenderer {
   private readonly stars = new Map<number, Array<{ x: number; y: number; s: number; a: number }>>();
   private seenFx = new Set<string>();
   private launchFlash = 0;
+  private planetSpinTime = 0;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -47,6 +49,7 @@ export class CanvasRenderer {
     this.effects.clear();
     this.seenFx.clear();
     this.launchFlash = 0;
+    this.planetSpinTime = 0;
   }
 
   render(
@@ -73,6 +76,9 @@ export class CanvasRenderer {
     }
 
     this.launchFlash = Math.max(0, this.launchFlash - dt);
+    if (!isFrozen(state.phase)) {
+      this.planetSpinTime += dt;
+    }
 
     const shipPos =
       state.phase === "flying"
@@ -92,7 +98,7 @@ export class CanvasRenderer {
       this.drawGoalRegion(region, goalColor, goalBright, level.worldHeight);
     }
     for (const planet of planetsOf(level.planets)) {
-      drawPlanet(this.ctx, planet, debug);
+      drawPlanet(this.ctx, planet, this.planetSpinTime, debug);
     }
     for (const region of hazardsAtTime(level.hazards, level.hazardMotion, state.elapsed)) {
       this.drawHazardRegion(region, level.worldHeight);

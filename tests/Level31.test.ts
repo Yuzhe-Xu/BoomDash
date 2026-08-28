@@ -19,7 +19,7 @@ describe("level 31 catalog", () => {
   it("is appended after sector thirty without a lock", () => {
     expect(findLevel(level31.id)).toBe(level31);
     expect(nextLevel(level30.id)).toBe(level31);
-    expect(nextLevel(level31.id)).toBeUndefined();
+    expect(nextLevel(level31.id)?.id).toBe("level-32");
   });
 
   it("keeps sector six layout and replaces the asteroid with a circular planet", () => {

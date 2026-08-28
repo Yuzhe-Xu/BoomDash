@@ -196,7 +196,10 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
   await expect(page.getByRole("button", { name: /SECTOR 29/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 30/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 31/ })).toBeEnabled();
-  await expect(page.locator(".sector-option")).toHaveCount(31);
+  await expect(page.getByRole("button", { name: /SECTOR 32/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 33/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 34/ })).toBeEnabled();
+  await expect(page.locator(".sector-option")).toHaveCount(34);
 
   const sectorList = page.locator("#sector-list");
   await expect(sectorList).toHaveCSS("overflow-y", "auto");
@@ -333,6 +336,45 @@ test("renders sector thirty-one's rocky planet and top goal", async ({ page }) =
   expect(pixels.goal).toBeGreaterThan(100);
   expect(pixels.planet).toBeGreaterThan(100);
   expect(pixels.variance).toBeGreaterThan(40);
+});
+
+test("renders sectors thirty-two through thirty-four's planets", async ({ page }) => {
+  for (const sector of [32, 33, 34]) {
+    await page.goto("/?debug=1&unlimited=0");
+    await page.getByRole("button", { name: "SECTORS" }).click();
+    await page.getByRole("button", { name: new RegExp(`SECTOR ${sector}`) }).click();
+
+    await expect(page.locator("#level-tag")).toHaveText(`SECTOR ${sector}`);
+    await expect(page.locator("#hud-stat")).toHaveText("BOMBS 0/8");
+    const pixels = await page.locator("#game").evaluate((element: HTMLCanvasElement) => {
+      const ctx = element.getContext("2d");
+      if (!ctx) {
+        return { planet: 0, variance: 0 };
+      }
+      const data = ctx.getImageData(0, 0, element.width, element.height).data;
+      let planet = 0;
+      let sum = 0;
+      let sumSq = 0;
+      let count = 0;
+      for (let index = 0; index < data.length; index += 4) {
+        const red = data[index];
+        const green = data[index + 1];
+        const blue = data[index + 2];
+        if (red > 70 && green > 28 && blue < green && red > green && red - blue > 18) {
+          planet += 1;
+          const luma = red * 0.3 + green * 0.59 + blue * 0.11;
+          sum += luma;
+          sumSq += luma * luma;
+          count += 1;
+        }
+      }
+      const mean = count > 0 ? sum / count : 0;
+      return { planet, variance: count > 0 ? sumSq / count - mean * mean : 0 };
+    });
+
+    expect(pixels.planet).toBeGreaterThan(100);
+    expect(pixels.variance).toBeGreaterThan(40);
+  }
 });
 
 test("renders sectors twenty-eight through thirty's dynamic regions", async ({ page }) => {

@@ -2017,13 +2017,27 @@ button.active,
   margin-left: -36px;
   overflow: hidden;
   border-radius: 50%;
+  box-shadow: 0 0 16px rgba(255, 150, 82, 0.22);
+}
+
+.tut-planet::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
   background:
-    radial-gradient(circle at 32% 28%, rgba(255, 214, 170, 0.42), transparent 34%),
-    radial-gradient(circle at 68% 74%, rgba(28, 16, 12, 0.88), transparent 46%),
-    radial-gradient(circle at 42% 40%, #c49a72 0%, #8a5a3c 42%, #4a3224 72%, #16100c 100%);
-  box-shadow:
-    inset -12px -10px 18px rgba(0, 0, 0, 0.55),
-    0 0 16px rgba(255, 150, 82, 0.22);
+    radial-gradient(circle at 32% 28%, rgba(255, 214, 170, 0.38), transparent 34%),
+    radial-gradient(circle at 72% 78%, rgba(8, 4, 6, 0.78), transparent 52%);
+  box-shadow: inset -12px -10px 18px rgba(0, 0, 0, 0.55);
+  content: "";
+  pointer-events: none;
+}
+
+.tut-planet-surface {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 42% 40%, #c49a72 0%, #8a5a3c 42%, #4a3224 72%, #16100c 100%);
+  animation: tut-planet-spin 16s linear infinite;
 }
 
 .tut-planet i {
@@ -2034,31 +2048,26 @@ button.active,
 }
 
 .tut-planet i:nth-child(1) {
-  left: 16px;
-  top: 18px;
-  width: 14px;
-  height: 14px;
+  left: 22px;
+  top: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 .tut-planet i:nth-child(2) {
-  left: 40px;
-  top: 28px;
-  width: 9px;
-  height: 9px;
-}
-
-.tut-planet i:nth-child(3) {
-  left: 22px;
-  top: 44px;
+  left: 48px;
+  top: 42px;
   width: 11px;
   height: 11px;
 }
 
-.tut-planet i:nth-child(4) {
-  left: 46px;
-  top: 12px;
-  width: 7px;
-  height: 7px;
+@keyframes tut-planet-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .anim-gravity .tut-craft-fall {

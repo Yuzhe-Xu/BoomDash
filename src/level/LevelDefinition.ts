@@ -67,6 +67,8 @@ export type PlanetDefinition = {
   radius: number;
   gravitationalParameter: number;
   appearance?: PlanetAppearance;
+  spinRate?: number;
+  spinPhase?: number;
 };
 
 export type LevelDefinition = {
