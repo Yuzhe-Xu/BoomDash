@@ -199,7 +199,16 @@ test("keeps every listed sector available and scrolls sector two", async ({ page
   await expect(page.getByRole("button", { name: /SECTOR 32/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 33/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /SECTOR 34/ })).toBeEnabled();
-  await expect(page.locator(".sector-option")).toHaveCount(34);
+  await expect(page.getByRole("button", { name: /SECTOR 35/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 36/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 37/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 38/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 39/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 40/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 41/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 42/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /SECTOR 43/ })).toBeEnabled();
+  await expect(page.locator(".sector-option")).toHaveCount(43);
 
   const sectorList = page.locator("#sector-list");
   await expect(sectorList).toHaveCSS("overflow-y", "auto");
@@ -374,6 +383,40 @@ test("renders sectors thirty-two through thirty-four's planets", async ({ page }
 
     expect(pixels.planet).toBeGreaterThan(100);
     expect(pixels.variance).toBeGreaterThan(40);
+  }
+});
+
+test("renders sectors forty through forty-three's orbiting planets", async ({ page }) => {
+  for (const sector of [40, 41, 42, 43]) {
+    await page.goto("/?debug=1&unlimited=0");
+    await page.getByRole("button", { name: "SECTORS" }).click();
+    await page.getByRole("button", { name: new RegExp(`SECTOR ${sector}`) }).click();
+
+    await expect(page.locator("#level-tag")).toHaveText(`SECTOR ${sector}`);
+    const pixels = await page.locator("#game").evaluate((element: HTMLCanvasElement) => {
+      const ctx = element.getContext("2d");
+      if (!ctx) {
+        return { goal: 0, planet: 0 };
+      }
+      const data = ctx.getImageData(0, 0, element.width, element.height).data;
+      let goal = 0;
+      let planet = 0;
+      for (let index = 0; index < data.length; index += 4) {
+        const red = data[index];
+        const green = data[index + 1];
+        const blue = data[index + 2];
+        if (green > 160 && green > red * 1.35 && green > blue * 1.15) {
+          goal += 1;
+        }
+        if (red > 70 && green > 28 && blue < green && red > green && red - blue > 18) {
+          planet += 1;
+        }
+      }
+      return { goal, planet };
+    });
+
+    expect(pixels.goal).toBeGreaterThan(100);
+    expect(pixels.planet).toBeGreaterThan(100);
   }
 });
 

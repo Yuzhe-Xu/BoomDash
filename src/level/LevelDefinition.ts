@@ -27,6 +27,12 @@ export type HazardMotion = {
   };
 };
 
+export type PlanetMotion = {
+  center: Point;
+  angularVelocity: number;
+  initialAngle?: number;
+};
+
 export type CurveCommand =
   | { kind: "line"; to: Point }
   | { kind: "quadratic"; control: Point; to: Point }
@@ -69,6 +75,7 @@ export type PlanetDefinition = {
   appearance?: PlanetAppearance;
   spinRate?: number;
   spinPhase?: number;
+  motion?: PlanetMotion;
 };
 
 export type LevelDefinition = {
