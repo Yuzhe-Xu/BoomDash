@@ -6,6 +6,16 @@ export function planetAtTime(planet: PlanetDefinition, elapsed: number): PlanetD
     return planet;
   }
 
+  if (motion.linearVelocity) {
+    return {
+      ...planet,
+      center: {
+        x: planet.center.x + motion.linearVelocity.x * elapsed,
+        y: planet.center.y + motion.linearVelocity.y * elapsed,
+      },
+    };
+  }
+
   const angle = (motion.initialAngle ?? 0) + motion.angularVelocity * elapsed;
   const offsetX = planet.center.x - motion.center.x;
   const offsetY = planet.center.y - motion.center.y;

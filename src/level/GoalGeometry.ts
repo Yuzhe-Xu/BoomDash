@@ -48,9 +48,10 @@ export function topClosedSemicircle(id: string, leftX: number, rightX: number): 
 
 export function cornerQuarterCircle(
   id: string,
-  corner: "top-left" | "top-right",
+  corner: "top-left" | "top-right" | "bottom-left" | "bottom-right",
   radius: number,
   worldWidth = LOGICAL_WIDTH,
+  worldHeight = LOGICAL_HEIGHT,
 ): GoalRegion {
   if (corner === "top-left") {
     return {
@@ -68,6 +69,44 @@ export function cornerQuarterCircle(
         },
       ],
       closeEdges: ["left", "top"],
+    };
+  }
+  if (corner === "bottom-left") {
+    return {
+      id,
+      start: { x: radius, y: worldHeight },
+      curve: [
+        {
+          kind: "arc",
+          cx: 0,
+          cy: worldHeight,
+          radius,
+          startAngle: 0,
+          endAngle: -Math.PI / 2,
+          counterclockwise: true,
+          to: { x: 0, y: worldHeight - radius },
+        },
+      ],
+      closeEdges: ["left", "bottom"],
+    };
+  }
+  if (corner === "bottom-right") {
+    return {
+      id,
+      start: { x: worldWidth - radius, y: worldHeight },
+      curve: [
+        {
+          kind: "arc",
+          cx: worldWidth,
+          cy: worldHeight,
+          radius,
+          startAngle: Math.PI,
+          endAngle: Math.PI / 2,
+          counterclockwise: true,
+          to: { x: worldWidth, y: worldHeight - radius },
+        },
+      ],
+      closeEdges: ["right", "bottom"],
     };
   }
   return {

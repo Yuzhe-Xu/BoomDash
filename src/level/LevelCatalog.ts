@@ -42,6 +42,11 @@ import { level40 } from "./level40";
 import { level41 } from "./level41";
 import { level42 } from "./level42";
 import { level43 } from "./level43";
+import { level44 } from "./level44";
+import { level45 } from "./level45";
+import { level46 } from "./level46";
+import { level47 } from "./level47";
+import { level48 } from "./level48";
 
 export const levels: LevelDefinition[] = [
   level1,
@@ -87,6 +92,11 @@ export const levels: LevelDefinition[] = [
   level41,
   level42,
   level43,
+  level44,
+  level45,
+  level46,
+  level47,
+  level48,
 ];
 
 export function findLevel(id: string): LevelDefinition | undefined {

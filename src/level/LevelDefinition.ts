@@ -31,6 +31,7 @@ export type PlanetMotion = {
   center: Point;
   angularVelocity: number;
   initialAngle?: number;
+  linearVelocity?: Point;
 };
 
 export type CurveCommand =
