@@ -18,7 +18,11 @@ test("shows a three-page tutorial before sector one", async ({ page }) => {
   await expect(page.locator(".anim-goal")).toBeVisible();
 
   await page.getByRole("button", { name: "NEXT" }).click();
-  await expect(page.locator("#tutorial-title")).toHaveText("炸弹部署");
+  await expect(page.locator("#tutorial-title")).toHaveText("爆炸推动飞船");
+  await expect(page.locator("#tutorial-copy")).toContainText("推离爆炸点");
+  await expect(page.locator("#tutorial-copy")).toContainText("速度和方向");
+  await expect(page.locator(".force-a span")).toHaveText("向右");
+  await expect(page.locator(".force-b span")).toHaveText("向左");
   await expect(page.locator(".anim-deploy")).toBeVisible();
 
   await page.getByRole("button", { name: "NEXT" }).click();

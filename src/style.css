@@ -737,6 +737,66 @@ button.active,
   transform: translateY(-50%);
 }
 
+.tut-force {
+  position: absolute;
+  width: 54px;
+  height: 24px;
+  color: var(--magenta);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  z-index: 4;
+}
+
+.tut-force i {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  width: 42px;
+  height: 2px;
+  background: var(--magenta);
+  box-shadow: 0 0 7px rgba(255, 43, 214, 0.7);
+}
+
+.tut-force i::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -4px;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid var(--magenta);
+}
+
+.tut-force span {
+  position: absolute;
+  top: 0;
+  left: 15px;
+  white-space: nowrap;
+}
+
+.force-a {
+  left: 39%;
+  top: 58%;
+}
+
+.force-a i {
+  transform: rotate(18deg);
+  transform-origin: left center;
+}
+
+.force-b {
+  left: 61%;
+  top: 36%;
+}
+
+.force-b i {
+  transform: rotate(162deg);
+  transform-origin: left center;
+}
+
 .tut-flash {
   position: absolute;
   left: 0;
@@ -825,6 +885,14 @@ button.active,
 
 .anim-deploy .tut-cursor {
   animation: tut-cursor 5s linear infinite;
+}
+
+.anim-deploy .force-a {
+  animation: tut-force-a 5s linear infinite;
+}
+
+.anim-deploy .force-b {
+  animation: tut-force-b 5s linear infinite;
 }
 
 .anim-flight .tut-craft {
@@ -1373,6 +1441,36 @@ button.active,
   50% {
     opacity: 0.85;
     transform: scale(1.35);
+  }
+}
+
+@keyframes tut-force-a {
+  0%,
+  24% {
+    opacity: 0;
+  }
+  28%,
+  42% {
+    opacity: 0.95;
+  }
+  48%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes tut-force-b {
+  0%,
+  52% {
+    opacity: 0;
+  }
+  56%,
+  70% {
+    opacity: 0.95;
+  }
+  76%,
+  100% {
+    opacity: 0;
   }
 }
 

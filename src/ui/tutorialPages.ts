@@ -22,9 +22,9 @@ export const LEVEL1_TUTORIAL_PAGES: TutorialPage[] = [
   },
   {
     id: "deploy",
-    kicker: "DEPLOY",
-    title: "炸弹部署",
-    copy: "在合理的位置部署炸弹，规划飞船的飞行路线。",
+    kicker: "IMPULSE",
+    title: "爆炸推动飞船",
+    copy: "炸弹爆炸会把飞船推离爆炸点，改变飞船的速度和方向。放在左侧会向右推，放在右侧会向左推；先部署位置，再在飞行中引爆。",
   },
   {
     id: "flight",

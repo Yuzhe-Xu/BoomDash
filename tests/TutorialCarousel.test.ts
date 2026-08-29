@@ -32,6 +32,11 @@ describe("tutorialPages", () => {
   it("defines three briefing pages for sector one", () => {
     expect(LEVEL1_TUTORIAL_PAGES).toHaveLength(3);
     expect(LEVEL1_TUTORIAL_PAGES.map((page) => page.id)).toEqual(["goal", "deploy", "flight"]);
+    expect(LEVEL1_TUTORIAL_PAGES[1]?.title).toBe("爆炸推动飞船");
+    expect(LEVEL1_TUTORIAL_PAGES[1]?.copy).toContain("推离爆炸点");
+    expect(LEVEL1_TUTORIAL_PAGES[1]?.copy).toContain("速度和方向");
+    expect(LEVEL1_TUTORIAL_PAGES[1]?.copy).toContain("左侧会向右推");
+    expect(LEVEL1_TUTORIAL_PAGES[1]?.copy).toContain("右侧会向左推");
     expect(tutorialPagesFor(level1.id)).toEqual(LEVEL1_TUTORIAL_PAGES);
   });
 
