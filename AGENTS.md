@@ -239,6 +239,10 @@ BoomDash 是一个竖屏优先的 H5 Canvas 游戏。玩家在飞船发射前部
 - [x] 第五十关：中央行星周围四个三角陨石逆时针旋转，下方左右静态陨石门与顶部左右边界终点组成旋转核心；固定步推荐路线可达。
 - [x] 第四十九至五十关统一追加到关卡目录，设计文档 `docs/level49-50-design.md` 与单元测试 `tests/Level49To50.test.ts` 已补齐。
 - [x] 第四十九至五十关完成后全部 246 项单元测试和生产构建通过。
+- [x] H5 生产包改为自包含字体资源：Orbitron 与 Share Tech Mono 使用本地 WOFF2，移除 Google Fonts 网络请求，并随包附带字体授权说明。
+- [x] Vite 生产资源路径改为相对路径 `base: "./"`，支持 ZIP 在站点根目录或子目录部署。
+- [x] 关卡目录浏览器验收断言同步到当前 50 个关卡；生产预览下 headed Playwright 的 15 个流程全部通过。
+- [x] 生成可提交的 `BoomDash-H5-submission.zip`，ZIP 根目录包含 `index.html`、构建资源和字体授权说明。
 
 ### 进行中
 
