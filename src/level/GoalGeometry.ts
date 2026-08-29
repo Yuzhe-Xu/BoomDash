@@ -350,19 +350,25 @@ export function regionsAtTime<T extends CurveRegion>(
   motion: HazardMotion | undefined,
   elapsed: number,
 ): T[] {
-  if (!motion) {
+  if (!motion && !regions.some((region) => "motion" in region && region.motion)) {
     return regions;
   }
-  const rawAngle = (motion.initialAngle ?? 0) + motion.angularVelocity * elapsed;
-  const angle = motion.angleRange
-    ? motion.angleRange.mode === "wrap"
-      ? wrappedAngle(rawAngle, motion.angleRange.min, motion.angleRange.max)
-      : oscillatingAngle(rawAngle, motion.angleRange.min, motion.angleRange.max)
-    : rawAngle;
-  if (angle === 0) {
-    return regions;
-  }
-  return regions.map((region) => rotateRegion(region, motion.center, angle));
+  return regions.map((region) => {
+    const regionMotion =
+      "motion" in region
+        ? (region as { motion?: HazardMotion | null }).motion ?? undefined
+        : motion;
+    if (!regionMotion) {
+      return region;
+    }
+    const rawAngle = (regionMotion.initialAngle ?? 0) + regionMotion.angularVelocity * elapsed;
+    const angle = regionMotion.angleRange
+      ? regionMotion.angleRange.mode === "wrap"
+        ? wrappedAngle(rawAngle, regionMotion.angleRange.min, regionMotion.angleRange.max)
+        : oscillatingAngle(rawAngle, regionMotion.angleRange.min, regionMotion.angleRange.max)
+      : rawAngle;
+    return angle === 0 ? region : rotateRegion(region, regionMotion.center, angle);
+  });
 }
 
 export function hazardsAtTime(

@@ -61,7 +61,9 @@ export type CurveRegion = {
 export type GoalRegion = CurveRegion & {
   bonusScore?: number;
 };
-export type HazardRegion = CurveRegion;
+export type HazardRegion = CurveRegion & {
+  motion?: HazardMotion | null;
+};
 export type DustRegion = CurveRegion & {
   dragPerSecond: number;
 };
