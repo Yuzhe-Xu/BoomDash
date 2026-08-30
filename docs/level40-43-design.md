@@ -28,7 +28,7 @@ The four supplied layouts are added in order as sectors 40-43. Yellow bodies are
 - Two smaller planets orbit it counterclockwise on different radii, one beginning at the left side and one above-right.
 - The goal is a top-right quarter-circle closed by the map's top and right edges. The ship must leave the core's direct approach, then enter the boundary goal from below-left after the moving guards open the route.
 
-All goals remain rule-based circles, rounded rectangles, or boundary-closed quarter circles. Planet positions are evaluated through `planetsAtTime` for gravity, swept collision, rendering, and debug display. The new motion does not alter planet spin or the existing speed-cap and fixed-step rules.
+All goals remain rule-based circles, rounded rectangles, or boundary-closed quarter circles. Planet positions are evaluated through `planetsAtTime` for gravity, swept collision, rendering, and Canvas debug geometry. The text debug overlay's gravity readout still uses the base planet positions and is a known display limitation. The new motion does not alter planet spin or the existing speed-cap and fixed-step rules.
 
 ## Verification
 

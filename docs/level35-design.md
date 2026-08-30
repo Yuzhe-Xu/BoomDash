@@ -10,7 +10,7 @@ Sector 35 translates the reference image into a vertical, static concentric chal
 - The outer closed dust annulus uses inner radius `132` and outer radius `162`.
 - The ship starts at the normal bottom deployment position and has eight bombs.
 
-Both annuli are represented by the existing rule-based ring geometry. The same regions drive rendering, swept contact checks, dust drag, and debug display. There are no moving hazards or special-case physics.
+Both annuli are represented by the existing rule-based ring geometry. The same regions drive rendering, sampled-region contact checks, dust drag, and debug display; the planet uses the separate swept collision check. There are no moving hazards or special-case physics.
 
 ## Intended Play
 

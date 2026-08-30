@@ -28,7 +28,7 @@ Sector 35 remains the previously released concentric planet, asteroid ring, and 
 - One circular asteroid moves around the planet using the fixed-step hazard motion clock.
 - The rounded-rectangle goal is in the upper-right corner. The intended route crosses the dust with speed, avoids the moving asteroid, and exits toward the corner rather than aiming directly at the gravity well.
 
-All regions use the existing circle, ring, triangle, and rounded-rectangle definitions. Rendering, swept contact, dust drag, dynamic geometry, and debug display continue to read the same level data.
+All regions use the existing circle, ring, triangle, and rounded-rectangle definitions. Rendering, sampled-region contact, dust drag, dynamic geometry, and debug display continue to read the same level data; only planet contact uses a ship-segment sweep.
 
 ## Verification
 
