@@ -115,7 +115,7 @@ BoomDash 是一个竖屏优先的 H5 Canvas 游戏。玩家在飞船发射前部
 
 > 本节需要随着每次功能变更同步更新。更新代码、测试或文档后，必须更新完成项、进行项、阻塞项和最后更新时间。
 
-最后更新时间：2026-08-30
+最后更新时间：2026-08-31
 
 ### 已完成
 
@@ -241,12 +241,13 @@ BoomDash 是一个竖屏优先的 H5 Canvas 游戏。玩家在飞船发射前部
 - [x] 第四十九至五十关完成后全部 246 项单元测试和生产构建通过。
 - [x] H5 生产包改为自包含字体资源：Orbitron 与 Share Tech Mono 使用本地 WOFF2，移除 Google Fonts 网络请求，并随包附带字体授权说明。
 - [x] Vite 生产资源路径改为相对路径 `base: "./"`，支持 ZIP 在站点根目录或子目录部署。
-- [x] 关卡目录浏览器验收断言同步到当前 50 个关卡；生产预览下 headed Playwright 的 15 个流程全部通过。
+- [x] 关卡目录浏览器验收断言同步到当前 50 个关卡；生产预览下 headed Playwright 的 16 个流程全部通过。
 - [x] 生成可提交的 `BoomDash-H5-submission.zip`，ZIP 根目录包含 `index.html`、构建资源和字体授权说明。
 - [x] 总体设计思路文档 `docs/design-approach.md`：记录当前玩法目标、系统架构、物理规则、关卡梯度、UI 和质量策略。
 - [x] 迭代优化过程文档 `docs/iteration-optimization.md`：记录从单关 MVP 到 50 关发布包的阶段性决策、验证结果和遗留风险。
 - [x] 添加 GitHub Pages 自动部署工作流：推送 `main` 后自动执行 `npm ci`、`npm run build` 并发布 `dist`。
 - [x] 仓库改为 Public 并完成首次 GitHub Pages Actions 部署，线上地址为 `https://yuzhe-xu.github.io/BoomDash/`。
+- [x] iOS 触摸兼容：将 `touch-action: none` 限制在 Canvas，部署按钮在 `pointerdown` 立即处理并保留键盘激活；新增 CLEAR、DEL、LAUNCH 触摸回归流程。
 
 ### 进行中
 
@@ -254,6 +255,7 @@ BoomDash 是一个竖屏优先的 H5 Canvas 游戏。玩家在飞船发射前部
 - [ ] 执行第三十五至三十九关的 headed 逐关像素检查，并用真实交互校准推荐炸弹时机。
 - [ ] 执行第四十四至四十八关的 headed 逐关像素检查，并用真实交互校准推荐炸弹时机。
 - [ ] 执行第四十九至五十关的 headed 逐关像素检查，并用真实交互校准推荐炸弹时机。
+- [ ] 在真实 iOS Safari 上验证部署按钮单点触摸和整套操作流程。
 
 ### 已知阻塞
 
@@ -261,8 +263,6 @@ BoomDash 是一个竖屏优先的 H5 Canvas 游戏。玩家在飞船发射前部
 - 第三十五至三十九关当前已通过结构化单元测试和生产构建，但尚未完成 headed Canvas 像素检查与推荐炸弹路线实机校准。
 - 第四十四至四十八关当前已通过结构化单元测试和生产构建，但尚未完成 headed Canvas 像素检查与推荐炸弹路线实机校准。
 - 第四十九至五十关当前已通过结构化单元测试和推荐固定步路线模拟；尚未完成 headed Canvas 像素检查与真实交互校准。
-
-
 ## 验证命令
 
 ```text

@@ -153,6 +153,30 @@ test("loads the first sector and can place a bomb then launch", async ({ page })
   await expect(page.locator("#hud-stat")).toContainText("T ");
 });
 
+test("activates planning controls with touch input", async ({ page }) => {
+  await page.goto("/");
+  await enterFirstSector(page);
+  const canvas = page.locator("#game");
+  const box = await canvas.boundingBox();
+  expect(box).toBeTruthy();
+
+  await page.touchscreen.tap(box!.x + box!.width * 0.5, box!.y + box!.height * 0.55);
+  await expect(page.locator("#hud-stat")).toContainText("BOMBS 1/5");
+
+  await page.getByRole("button", { name: "CLEAR" }).tap();
+  await expect(page.locator("#hud-stat")).toContainText("BOMBS 0/5");
+
+  await page.touchscreen.tap(box!.x + box!.width * 0.5, box!.y + box!.height * 0.55);
+  await page.keyboard.press("1");
+  await expect(page.getByRole("button", { name: "DEL" })).toBeEnabled();
+  await page.getByRole("button", { name: "DEL" }).tap();
+  await expect(page.locator("#hud-stat")).toContainText("BOMBS 0/5");
+
+  await page.touchscreen.tap(box!.x + box!.width * 0.5, box!.y + box!.height * 0.55);
+  await page.getByRole("button", { name: "LAUNCH" }).tap();
+  await expect(page.locator("#planning-bar")).toBeHidden();
+});
+
 test("returns to the main menu from pause", async ({ page }) => {
   await page.goto("/");
   await enterFirstSector(page);

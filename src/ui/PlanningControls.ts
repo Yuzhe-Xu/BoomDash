@@ -7,9 +7,9 @@ export class PlanningControls {
   ) {}
 
   bind(handlers: { clear: () => void; remove: () => void; launch: () => void }): void {
-    this.clearBtn.addEventListener("click", handlers.clear);
-    this.deleteBtn.addEventListener("click", handlers.remove);
-    this.launchBtn.addEventListener("click", handlers.launch);
+    this.bindActivation(this.clearBtn, handlers.clear);
+    this.bindActivation(this.deleteBtn, handlers.remove);
+    this.bindActivation(this.launchBtn, handlers.launch);
   }
 
   setVisible(visible: boolean): void {
@@ -18,5 +18,17 @@ export class PlanningControls {
 
   setDeleteEnabled(enabled: boolean): void {
     this.deleteBtn.disabled = !enabled;
+  }
+
+  private bindActivation(button: HTMLButtonElement, handler: () => void): void {
+    button.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      handler();
+    });
+    button.addEventListener("click", (event) => {
+      if (event.detail === 0) {
+        handler();
+      }
+    });
   }
 }
