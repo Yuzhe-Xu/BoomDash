@@ -76,6 +76,7 @@ body,
 
 #stage {
   --stage-scale: min(100cqw / 390px, 100cqh / 844px);
+  --touch-size: max(44px, calc(44px / var(--stage-scale)));
   position: relative;
   width: 390px;
   height: 844px;
@@ -127,7 +128,7 @@ body,
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: calc(10px + var(--safe-top)) 12px 0;
+  padding: calc(10px + var(--safe-top) / var(--stage-scale)) 12px 0;
   gap: 6px;
 }
 
@@ -187,7 +188,7 @@ body,
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 0 12px calc(12px + var(--safe-bottom));
+  padding: 0 12px calc(12px + var(--safe-bottom) / var(--stage-scale));
 }
 
 #planning-bar {
@@ -199,14 +200,14 @@ body,
 #bomb-rail {
   left: 8px;
   right: 8px;
-  bottom: calc(12px + var(--safe-bottom));
+  bottom: calc(12px + var(--safe-bottom) / var(--stage-scale));
   display: flex;
   gap: 6px;
   overflow-x: auto;
 }
 
 #bomb-rail.raised {
-  bottom: calc(68px + var(--safe-bottom));
+  bottom: calc(68px + var(--safe-bottom) / var(--stage-scale));
 }
 
 #bomb-rail[hidden],
@@ -223,7 +224,8 @@ button {
   color: var(--ink);
   font: inherit;
   letter-spacing: 0.14em;
-  min-height: 44px;
+  min-height: var(--touch-size);
+  font-size: max(12px, calc(12px / var(--stage-scale)));
   padding: 0 12px;
   cursor: pointer;
   touch-action: manipulation;
@@ -249,15 +251,16 @@ button.active,
 }
 
 .icon-btn {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: var(--touch-size);
+  min-height: var(--touch-size);
   padding: 0;
   font-size: 12px;
 }
 
 #bomb-rail button {
   flex: 0 0 auto;
-  min-width: 44px;
+  min-width: var(--touch-size);
+  min-height: var(--touch-size);
   padding: 0 10px;
 }
 
@@ -323,7 +326,7 @@ button.active,
   gap: 8px;
   width: 100%;
   min-width: 0;
-  min-height: 0;
+  min-height: var(--touch-size);
   aspect-ratio: 1;
   padding: 8px 4px;
   text-align: center;

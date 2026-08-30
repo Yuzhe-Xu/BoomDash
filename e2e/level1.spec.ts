@@ -177,6 +177,26 @@ test("activates planning controls with touch input", async ({ page }) => {
   await expect(page.locator("#planning-bar")).toBeHidden();
 });
 
+test("keeps planning controls touch-sized on a small phone viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto("/");
+  await enterFirstSector(page);
+
+  const launch = page.getByRole("button", { name: "LAUNCH" });
+  const clear = page.getByRole("button", { name: "CLEAR" });
+  const launchBox = await launch.boundingBox();
+  const clearBox = await clear.boundingBox();
+  expect(launchBox).toBeTruthy();
+  expect(clearBox).toBeTruthy();
+  expect(launchBox!.height).toBeGreaterThanOrEqual(43);
+  expect(clearBox!.height).toBeGreaterThanOrEqual(43);
+  expect(launchBox!.y + launchBox!.height).toBeLessThanOrEqual(568);
+  expect(clearBox!.y + clearBox!.height).toBeLessThanOrEqual(568);
+
+  await launch.tap();
+  await expect(page.locator("#planning-bar")).toBeHidden();
+});
+
 test("returns to the main menu from pause", async ({ page }) => {
   await page.goto("/");
   await enterFirstSector(page);
