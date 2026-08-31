@@ -326,7 +326,7 @@ button.active,
   gap: 8px;
   width: 100%;
   min-width: 0;
-  min-height: var(--touch-size);
+  min-height: 0;
   aspect-ratio: 1;
   padding: 8px 4px;
   text-align: center;

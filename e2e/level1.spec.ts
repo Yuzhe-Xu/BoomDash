@@ -197,6 +197,25 @@ test("keeps planning controls touch-sized on a small phone viewport", async ({ p
   await expect(page.locator("#planning-bar")).toBeHidden();
 });
 
+test("keeps sector cards separated on a small phone viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "SECTORS" }).tap();
+
+  const rectangles = await page.locator(".sector-option").evaluateAll((elements) =>
+    elements.map((element) => {
+      const rect = element.getBoundingClientRect();
+      return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
+    }),
+  );
+  const overlaps = rectangles.some((a, index) =>
+    rectangles.slice(index + 1).some(
+      (b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top,
+    ),
+  );
+  expect(overlaps).toBe(false);
+});
+
 test("returns to the main menu from pause", async ({ page }) => {
   await page.goto("/");
   await enterFirstSector(page);
