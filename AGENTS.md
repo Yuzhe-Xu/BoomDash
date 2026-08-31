@@ -248,7 +248,7 @@ BoomDash 是一个竖屏优先的 H5 Canvas 游戏。玩家在飞船发射前部
 - [x] 添加 GitHub Pages 自动部署工作流：推送 `main` 后自动执行 `npm ci`、`npm run build` 并发布 `dist`。
 - [x] 仓库改为 Public 并完成首次 GitHub Pages Actions 部署，线上地址为 `https://yuzhe-xu.github.io/BoomDash/`。
 - [x] iOS 触摸兼容：将 `touch-action: none` 限制在 Canvas，部署按钮在 `pointerdown` 立即处理并保留键盘激活；新增 CLEAR、DEL、LAUNCH 触摸回归流程。
-- [x] 小屏手机兼容：DOM 控件按 Stage 缩放比例补偿触摸尺寸和安全区，Canvas 仍保持固定逻辑视口；关卡选择 Grid 显式保持方格行高，避免 iOS 小屏方格重叠；新增 `320 x 568` 小屏视口回归验证。
+- [x] 小屏手机兼容：DOM 控件按 Stage 缩放比例补偿触摸尺寸和安全区，Canvas 仍保持固定逻辑视口；关卡选择 Grid 使用显式固定行高和卡片填充，避免 iOS 小屏方格重叠；新增 `320 x 568` 小屏视口回归验证。
 
 ### 进行中
 

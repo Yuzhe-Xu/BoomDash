@@ -202,18 +202,40 @@ test("keeps sector cards separated on a small phone viewport", async ({ page }) 
   await page.goto("/");
   await page.getByRole("button", { name: "SECTORS" }).tap();
 
-  const rectangles = await page.locator(".sector-option").evaluateAll((elements) =>
+  const cards = await page.locator(".sector-option").evaluateAll((elements) =>
     elements.map((element) => {
       const rect = element.getBoundingClientRect();
-      return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
+      const name = element.querySelector(".sector-name")?.getBoundingClientRect();
+      const progress = element.querySelector(".sector-progress")?.getBoundingClientRect();
+      return {
+        card: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom },
+        name: name ? { left: name.left, right: name.right, top: name.top, bottom: name.bottom } : null,
+        progress: progress
+          ? { left: progress.left, right: progress.right, top: progress.top, bottom: progress.bottom }
+          : null,
+      };
     }),
   );
+  const rectangles = cards.map(({ card }) => card);
   const overlaps = rectangles.some((a, index) =>
     rectangles.slice(index + 1).some(
       (b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top,
     ),
   );
+  const contentOverflow = cards.some(({ card, name, progress }) =>
+    [name, progress].some(
+      (content) =>
+        content !== null &&
+        (content.left < card.left ||
+          content.right > card.right ||
+          content.top < card.top ||
+          content.bottom > card.bottom),
+    ),
+  );
+  const nonSquare = rectangles.some((rect) => Math.abs(rect.right - rect.left - (rect.bottom - rect.top)) > 8);
   expect(overlaps).toBe(false);
+  expect(contentOverflow).toBe(false);
+  expect(nonSquare).toBe(false);
 });
 
 test("returns to the main menu from pause", async ({ page }) => {
